@@ -92,11 +92,33 @@ const Hero = () => {
           style={{ animationDelay: '0.6s' }}
         >
           <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-primary/10 backdrop-blur-sm z-10"></div>
-          <img 
-            src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80&w=2000" 
-            alt="ProTalker AI Interface" 
-            className="w-full object-cover aspect-[16/9] z-0"
-          />
+          <div className="relative w-full aspect-[16/9]">
+            <svg 
+              viewBox="0 0 800 450" 
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-full h-full"
+            >
+              <rect width="800" height="450" fill="#f8f9fa" />
+              
+              {/* Stylized UI elements to match logo style */}
+              <rect x="50" y="50" width="700" height="60" rx="10" fill="#f0f0f0" />
+              <circle cx="85" cy="80" r="15" fill="#6d28d9" />
+              <rect x="110" y="70" width="200" height="20" rx="5" fill="#e0e0e0" />
+              
+              <rect x="50" y="130" width="450" height="270" rx="10" fill="#f0f0f0" />
+              <path d="M100,180 Q175,130 250,180 T400,180" stroke="#6d28d9" strokeWidth="3" fill="none" />
+              <path d="M100,220 Q175,170 250,220 T400,220" stroke="#6d28d9" strokeWidth="3" fill="none" />
+              <path d="M100,260 Q175,210 250,260 T400,260" stroke="#6d28d9" strokeWidth="3" fill="none" />
+              
+              <rect x="520" y="130" width="230" height="270" rx="10" fill="#f0f0f0" />
+              <circle cx="635" cy="190" r="50" fill="white" stroke="#6d28d9" strokeWidth="3" />
+              <path d="M605,190 L625,210 L665,170" stroke="#6d28d9" strokeWidth="5" fill="none" />
+              <rect x="585" y="270" width="100" height="15" rx="5" fill="#e0e0e0" />
+              <rect x="585" y="295" width="100" height="15" rx="5" fill="#e0e0e0" />
+              <rect x="585" y="320" width="100" height="15" rx="5" fill="#e0e0e0" />
+              <rect x="585" y="345" width="100" height="15" rx="5" fill="#e0e0e0" />
+            </svg>
+          </div>
         </div>
       </div>
       

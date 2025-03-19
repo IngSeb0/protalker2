@@ -34,9 +34,11 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <a href="#" className="flex items-center space-x-2">
-              <span className="h-8 w-8 bg-primary rounded-md flex items-center justify-center">
-                <span className="text-white font-bold">P</span>
-              </span>
+              <img 
+                src="/lovable-uploads/a463166e-145d-41ca-a626-c5dbeacf0140.png" 
+                alt="ProTalker Logo" 
+                className="h-10 w-10"
+              />
               <span className="font-display font-semibold text-lg text-foreground">ProTalker</span>
             </a>
           </div>
