@@ -35,7 +35,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <a href="#" className="flex items-center space-x-2">
               <img 
-                src="/lovable-uploads/a463166e-145d-41ca-a626-c5dbeacf0140.png" 
+                src="/lovable-uploads/5ca03822-e2b4-4bd7-a6b6-81224f3fc870.png" 
                 alt="ProTalker Logo" 
                 className="h-10 w-10"
               />

@@ -100,19 +100,43 @@ const Hero = () => {
             >
               <rect width="800" height="450" fill="#f8f9fa" />
               
-              {/* Stylized UI elements to match logo style */}
+              {/* Stylized UI elements to match new logo style */}
               <rect x="50" y="50" width="700" height="60" rx="10" fill="#f0f0f0" />
               <circle cx="85" cy="80" r="15" fill="#6d28d9" />
               <rect x="110" y="70" width="200" height="20" rx="5" fill="#e0e0e0" />
               
               <rect x="50" y="130" width="450" height="270" rx="10" fill="#f0f0f0" />
+              
+              {/* Speech bubble or talking icon to match the new logo */}
               <path d="M100,180 Q175,130 250,180 T400,180" stroke="#6d28d9" strokeWidth="3" fill="none" />
               <path d="M100,220 Q175,170 250,220 T400,220" stroke="#6d28d9" strokeWidth="3" fill="none" />
               <path d="M100,260 Q175,210 250,260 T400,260" stroke="#6d28d9" strokeWidth="3" fill="none" />
               
-              <rect x="520" y="130" width="230" height="270" rx="10" fill="#f0f0f0" />
-              <circle cx="635" cy="190" r="50" fill="white" stroke="#6d28d9" strokeWidth="3" />
-              <path d="M605,190 L625,210 L665,170" stroke="#6d28d9" strokeWidth="5" fill="none" />
+              {/* Head silhouette similar to logo */}
+              <path 
+                d="M520,130 h140 a90,90 0 0 1 90,90 v70 a10,10 0 0 1 -10,10 h-80 v40 h-30 v-30 l-20,-10 h-60 a30,30 0 0 1 -30,-30 z" 
+                fill="#6d28d9" 
+                opacity="0.1"
+                stroke="#6d28d9"
+                strokeWidth="3"
+              />
+              
+              {/* Sound waves similar to logo */}
+              <path 
+                d="M660,200 a30,30 0 0 1 30,30 a30,30 0 0 1 -30,30" 
+                fill="none" 
+                stroke="#6d28d9" 
+                strokeWidth="3" 
+                strokeLinecap="round"
+              />
+              <path 
+                d="M670,185 a45,45 0 0 1 45,45 a45,45 0 0 1 -45,45" 
+                fill="none" 
+                stroke="#6d28d9" 
+                strokeWidth="3" 
+                strokeLinecap="round"
+              />
+              
               <rect x="585" y="270" width="100" height="15" rx="5" fill="#e0e0e0" />
               <rect x="585" y="295" width="100" height="15" rx="5" fill="#e0e0e0" />
               <rect x="585" y="320" width="100" height="15" rx="5" fill="#e0e0e0" />
