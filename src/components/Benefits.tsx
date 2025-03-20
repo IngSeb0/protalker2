@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { MessageSquare, Zap, Shield, Award, RefreshCw, Clock } from 'lucide-react';
 
@@ -13,8 +12,8 @@ const features = [
           stroke="#6d28d9" strokeWidth="2" strokeLinecap="round"/>
       </svg>
     ),
-    title: "Context-Aware Responses",
-    description: "ProTalker analyzes conversation context to provide relevant suggestions tailored to your specific situation."
+    title: "Easy and Customizable",
+    description: "ProTalker is easy to use and adapts to your communication style, offering a seamless and personalized experience without the need for complicated configurations."
   },
   {
     icon: <Zap className="h-6 w-6 text-primary" />,
