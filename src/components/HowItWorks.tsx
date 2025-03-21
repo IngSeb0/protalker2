@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils';
 const steps = [
   {
     number: "01",
-    title: "Sign Up For Your Free Trial",
-    description: "Create your account in seconds and get immediate access to all premium features for a full 14-day period. No credit card required to get started.",
+    title: "Visit the ProTalker Website",
+    description: "Go to our official page and sign up to access your AI-powered communication assistant.",
     illustration: (
       <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="225" fill="#f8f9fa" />
@@ -22,27 +22,25 @@ const steps = [
   },
   {
     number: "02",
-    title: "Connect Your Communication Channels",
-    description: "Easily integrate ProTalker with your email, messaging apps, and social media platforms with our one-click secure connection process.",
+    title: "Answer a Few Quick Questions",
+    description: "Provide some basic details about your communication style and goals to personalize your experience.",
     illustration: (
       <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="225" fill="#f8f9fa" />
-        <circle cx="100" cy="112" r="50" fill="#f0f0f0" stroke="#6d28d9" strokeWidth="2" />
-        <circle cx="300" cy="112" r="50" fill="#f0f0f0" stroke="#6d28d9" strokeWidth="2" />
-        <path d="M150,112 L250,112" stroke="#6d28d9" strokeWidth="3" strokeDasharray="10 5" />
-        <rect x="80" y="97" width="40" height="30" rx="5" fill="white" />
-        <rect x="280" y="97" width="40" height="30" rx="5" fill="white" />
-        <text x="100" y="115" fontSize="14" fill="#6d28d9" textAnchor="middle" dominantBaseline="middle">@</text>
-        <text x="300" y="115" fontSize="20" fill="#6d28d9" textAnchor="middle" dominantBaseline="middle">P</text>
-        <circle cx="200" cy="80" r="15" fill="#6d28d9" />
-        <path d="M200,70 L200,90 M190,80 L210,80" stroke="white" strokeWidth="2" />
+        <rect x="100" y="40" width="200" height="150" rx="10" fill="#f0f0f0" stroke="#6d28d9" strokeWidth="2" />
+        <rect x="130" y="70" width="140" height="20" rx="5" fill="#e0e0e0" />
+        <rect x="130" y="100" width="140" height="20" rx="5" fill="#e0e0e0" />
+        <rect x="130" y="130" width="140" height="20" rx="5" fill="#e0e0e0" />
+        <circle cx="120" cy="80" r="5" fill="#6d28d9" />
+        <circle cx="120" cy="110" r="5" fill="#6d28d9" />
+        <circle cx="120" cy="140" r="5" fill="#6d28d9" />
       </svg>
     )
   },
   {
     number: "03",
-    title: "Experience AI-Powered Communication",
-    description: "Start receiving intelligent response suggestions instantly as you communicate, saving time and improving your conversation quality right away.",
+    title: "Practice Your Conversations",
+    description: "Engage with real-life scenarios and get AI-driven response suggestions to improve your messaging.",
     illustration: (
       <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="225" fill="#f8f9fa" />
@@ -54,9 +52,24 @@ const steps = [
         <path d="M350,140 C370,140 370,110 350,110" stroke="#6d28d9" strokeWidth="2" fill="none" />
         <circle cx="350" cy="110" r="3" fill="#6d28d9" />
         <circle cx="350" cy="140" r="3" fill="#6d28d9" />
-        <path d="M350,85 C380,85 380,45 350,45" stroke="#6d28d9" strokeWidth="2" fill="none" />
-        <circle cx="350" cy="45" r="3" fill="#6d28d9" />
-        <circle cx="350" cy="85" r="3" fill="#6d28d9" />
+      </svg>
+    )
+  },
+  {
+    number: "04",
+    title: "Get Feedback & Improve",
+    description: "Receive insightful feedback and recommendations to refine your tone, clarity, and effectiveness.",
+    illustration: (
+      <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="225" fill="#f8f9fa" />
+        <rect x="80" y="60" width="240" height="120" rx="10" fill="#f0f0f0" stroke="#6d28d9" strokeWidth="2" />
+        <path d="M110,100 L130,120 L150,80" stroke="#6d28d9" strokeWidth="3" fill="none" />
+        <line x1="170" y1="100" x2="270" y2="100" stroke="#e0e0e0" strokeWidth="2" />
+        <line x1="170" y1="120" x2="250" y2="120" stroke="#e0e0e0" strokeWidth="2" />
+        <line x1="170" y1="140" x2="260" y2="140" stroke="#e0e0e0" strokeWidth="2" />
+        <circle cx="200" cy="40" r="20" fill="#6d28d9" opacity="0.2" />
+        <path d="M190,40 L200,50 L215,35" stroke="#6d28d9" strokeWidth="2" fill="none" />
+        <path d="M200,185 L200,165 M185,175 L215,175" stroke="#6d28d9" strokeWidth="2" />
       </svg>
     )
   }
@@ -103,7 +116,7 @@ const HowItWorks = () => {
           <div className="chip mb-6">Simple Process</div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">How ProTalker Works</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Get started with ProTalker in just three simple steps and transform your communication immediately.
+            Get started with ProTalker in just four simple steps and transform your communication immediately.
           </p>
         </div>
         
