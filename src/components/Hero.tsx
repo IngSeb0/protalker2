@@ -91,7 +91,6 @@ const Hero = () => {
           className="max-w-5xl mt-16 relative w-full rounded-xl overflow-hidden shadow-glass border border-white/20 opacity-0 animate-fade-in"
           style={{ animationDelay: '0.6s' }}
         >
-          <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-primary/10 backdrop-blur-sm z-10"></div>
           <div className="relative w-full aspect-[16/9]">
             <img 
               src="/lovable-uploads/2671a94f-6a2d-4e21-9a7c-da22bb6df3c3.png" 
