@@ -93,55 +93,11 @@ const Hero = () => {
         >
           <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-primary/10 backdrop-blur-sm z-10"></div>
           <div className="relative w-full aspect-[16/9]">
-            <svg 
-              viewBox="0 0 800 450" 
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full h-full"
-            >
-              <rect width="800" height="450" fill="#f8f9fa" />
-              
-              {/* Stylized UI elements to match new logo style */}
-              <rect x="50" y="50" width="700" height="60" rx="10" fill="#f0f0f0" />
-              <circle cx="85" cy="80" r="15" fill="#6d28d9" />
-              <rect x="110" y="70" width="200" height="20" rx="5" fill="#e0e0e0" />
-              
-              <rect x="50" y="130" width="450" height="270" rx="10" fill="#f0f0f0" />
-              
-              {/* Speech bubble or talking icon to match the new logo */}
-              <path d="M100,180 Q175,130 250,180 T400,180" stroke="#6d28d9" strokeWidth="3" fill="none" />
-              <path d="M100,220 Q175,170 250,220 T400,220" stroke="#6d28d9" strokeWidth="3" fill="none" />
-              <path d="M100,260 Q175,210 250,260 T400,260" stroke="#6d28d9" strokeWidth="3" fill="none" />
-              
-              {/* Head silhouette similar to logo */}
-              <path 
-                d="M520,130 h140 a90,90 0 0 1 90,90 v70 a10,10 0 0 1 -10,10 h-80 v40 h-30 v-30 l-20,-10 h-60 a30,30 0 0 1 -30,-30 z" 
-                fill="#6d28d9" 
-                opacity="0.1"
-                stroke="#6d28d9"
-                strokeWidth="3"
-              />
-              
-              {/* Sound waves similar to logo */}
-              <path 
-                d="M660,200 a30,30 0 0 1 30,30 a30,30 0 0 1 -30,30" 
-                fill="none" 
-                stroke="#6d28d9" 
-                strokeWidth="3" 
-                strokeLinecap="round"
-              />
-              <path 
-                d="M670,185 a45,45 0 0 1 45,45 a45,45 0 0 1 -45,45" 
-                fill="none" 
-                stroke="#6d28d9" 
-                strokeWidth="3" 
-                strokeLinecap="round"
-              />
-              
-              <rect x="585" y="270" width="100" height="15" rx="5" fill="#e0e0e0" />
-              <rect x="585" y="295" width="100" height="15" rx="5" fill="#e0e0e0" />
-              <rect x="585" y="320" width="100" height="15" rx="5" fill="#e0e0e0" />
-              <rect x="585" y="345" width="100" height="15" rx="5" fill="#e0e0e0" />
-            </svg>
+            <img 
+              src="/lovable-uploads/2671a94f-6a2d-4e21-9a7c-da22bb6df3c3.png" 
+              alt="ProTalker AI Interface" 
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </div>
