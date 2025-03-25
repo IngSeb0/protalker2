@@ -44,7 +44,7 @@ const Navbar = () => {
           </div>
           
           <nav className="hidden md:flex items-center space-x-8">
-            {['Features', 'How It Works', 'Testimonials', 'Pricing', 'FAQ'].map((item) => (
+            {['Features', 'How It Works', 'Pricing', 'FAQ'].map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} 
@@ -73,7 +73,7 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-md transition-all duration-300 animate-slide-up p-4">
           <nav className="flex flex-col space-y-4 py-4">
-            {['Features', 'How It Works', 'Testimonials', 'Pricing', 'FAQ'].map((item) => (
+            {['Features', 'How It Works', 'Pricing', 'FAQ'].map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
