@@ -4,15 +4,20 @@ import { supabase } from '../lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
 import { useToast } from '@/hooks/use-toast';
 
+type ProfileData = {
+  nombre: string | null;
+}
+
 type AuthContextType = {
   session: Session | null;
   user: User | null;
   loading: boolean;
+  profile: ProfileData | null;
   signIn: (email: string, password: string) => Promise<{
     error: Error | null;
     data: Session | null;
   }>;
-  signUp: (email: string, password: string) => Promise<{
+  signUp: (email: string, password: string, nombre: string) => Promise<{
     error: Error | null;
     data: Session | null;
   }>;
@@ -25,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -32,6 +38,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      }
       setLoading(false);
     });
 
@@ -41,11 +50,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
+      
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('nombre')
+        .eq('id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching profile:', error);
+        setProfile(null);
+      } else {
+        setProfile(data);
+      }
+    } catch (error) {
+      console.error('Error in fetchProfile:', error);
+      setProfile(null);
+    }
+  };
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -55,9 +91,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
+        let errorMessage = 'Error al iniciar sesión';
+        if (error.message.includes('Invalid login credentials')) {
+          errorMessage = 'Correo electrónico o contraseña incorrectos';
+        } else if (error.message.includes('Email not confirmed')) {
+          errorMessage = 'Por favor, confirma tu correo electrónico antes de iniciar sesión';
+        }
+
         toast({
           title: 'Error al iniciar sesión',
-          description: error.message,
+          description: errorMessage,
           variant: 'destructive',
         });
         return { error, data: null };
@@ -78,21 +121,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, nombre: string) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            nombre,
+          },
+        },
       });
 
       if (error) {
+        let errorMessage = 'Error al registrarse';
+        if (error.message.includes('already registered')) {
+          errorMessage = 'Este correo electrónico ya está registrado';
+        } else if (error.message.includes('password')) {
+          errorMessage = 'La contraseña debe tener al menos 6 caracteres';
+        }
+
         toast({
           title: 'Error al registrarse',
-          description: error.message,
+          description: errorMessage,
           variant: 'destructive',
         });
         return { error, data: null };
       }
+
+      // Si el registro fue exitoso, intentamos crear el perfil
+      // Esto sucederá automáticamente con un trigger en Supabase
 
       toast({
         title: '¡Registro exitoso!',
@@ -123,6 +181,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         session,
         user,
         loading,
+        profile,
         signIn,
         signUp,
         signOut,

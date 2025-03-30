@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import { LogOut, User, UserCircle } from "lucide-react";
 
 export const UserMenu = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, profile } = useAuth();
 
   if (!user) {
     return (
@@ -24,9 +24,8 @@ export const UserMenu = () => {
     );
   }
 
-  const initials = user.email 
-    ? user.email.substring(0, 2).toUpperCase() 
-    : "U";
+  const userName = profile?.nombre || 'Usuario';
+  const initials = userName ? userName.substring(0, 2).toUpperCase() : user.email?.substring(0, 2).toUpperCase() || "U";
 
   return (
     <DropdownMenu>
@@ -40,7 +39,9 @@ export const UserMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end">
-        <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
+        <DropdownMenuLabel>
+          ¡Hola, {userName}!
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="flex items-center">
           <UserCircle className="mr-2 h-4 w-4" />

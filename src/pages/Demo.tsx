@@ -1,18 +1,24 @@
+import { NavbarCustom } from "@/components/NavbarCustom";
+import { useAuth } from "@/context/AuthContext"; 
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Mic, Send, User, Bot, LogOut, Play } from 'lucide-react';
-import { toast } from 'sonner';
+export default function Demo() {
+  const { user, profile } = useAuth();
+  const { toast } = useToast();
+  const [greeting, setGreeting] = useState("");
 
-const BASE_API_URL = 'http://localhost:5000'; // Change this to your actual API URL
-const OPENAI_API_URL = 'http://localhost:5000'; // Change this to your OpenAI server URL
+  useEffect(() => {
+    if (profile?.nombre) {
+      setGreeting(`¡Hola, ${profile.nombre}! Bienvenido a nuestra demostración.`);
+    } else if (user) {
+      setGreeting("¡Bienvenido a nuestra demostración!");
+    }
+  }, [user, profile]);
 
-const Demo = () => {
-  const { user, loading, signOut } = useAuth();
+  const { loading, signOut } = useAuth();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Array<{type: 'user' | 'bot', content: string}>>([
     {type: 'bot', content: '¡Hola! Soy tu asistente de entrenamiento. ¿En qué tipo de situación quieres practicar hoy? ¿Una entrevista laboral, una presentación académica o un discurso profesional?'}
@@ -29,7 +35,6 @@ const Demo = () => {
   }, [loading, user, navigate]);
   
   useEffect(() => {
-    // Auto scroll to bottom when new messages arrive
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
@@ -38,12 +43,10 @@ const Demo = () => {
   const handleSendMessage = async () => {
     if (!message.trim()) return;
     
-    // Add user message
     setMessages(prev => [...prev, {type: 'user', content: message}]);
     setIsProcessing(true);
     
     try {
-      // Call OpenAI API
       const response = await fetch(`${OPENAI_API_URL}/api/openai-chat`, {
         method: 'POST',
         headers: {
@@ -58,13 +61,11 @@ const Demo = () => {
       
       const data = await response.json();
       
-      // Add assistant response
       setMessages(prev => [...prev, {type: 'bot', content: data.response}]);
     } catch (error) {
       console.error('Error:', error);
       toast.error('Error al comunicarse con el asistente');
       
-      // Fallback response if API fails
       setMessages(prev => [...prev, {type: 'bot', content: 'Lo siento, estoy teniendo problemas para responder. Por favor, intenta de nuevo más tarde.'}]);
     } finally {
       setIsProcessing(false);
@@ -104,9 +105,7 @@ const Demo = () => {
   const toggleListening = () => {
     setIsListening(!isListening);
     
-    // Este es un placeholder. En una implementación real, usarías una API para convertir voz a texto.
     if (!isListening) {
-      // Simulating voice recognition
       setTimeout(() => {
         setMessage(prev => prev + "Me gustaría practicar para una entrevista en el sector tecnológico. ");
         setIsListening(false);
@@ -128,26 +127,23 @@ const Demo = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <a href="/" className="flex items-center space-x-2">
-            <img 
-              src="/lovable-uploads/5ca03822-e2b4-4bd7-a6b6-81224f3fc870.png" 
-              alt="ProTalker Logo" 
-              className="h-8 w-8"
-            />
-            <span className="font-display font-semibold text-lg text-foreground">ProTalker</span>
-          </a>
-          
-          <Button variant="ghost" size="sm" onClick={handleLogout}>
-            <LogOut size={16} className="mr-2" />
-            Cerrar sesión
-          </Button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50">
+      <NavbarCustom />
       
-      <main className="flex-grow container mx-auto px-4 py-8 flex flex-col">
+      <main className="container mx-auto px-4 py-8">
+        {greeting && (
+          <Card className="mb-8 border-none shadow-md bg-gradient-to-r from-primary/10 to-secondary/10">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-2xl font-bold text-primary">
+                {greeting}
+              </CardTitle>
+              <CardDescription>
+                Aquí podrás probar las funcionalidades de ProTalker.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        )}
+        
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Demo de entrenamiento</h1>
           <p className="text-muted-foreground">
@@ -350,6 +346,4 @@ const Demo = () => {
       </main>
     </div>
   );
-};
-
-export default Demo;
+}

@@ -1,6 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 import IndexEs from "./pages/IndexEs";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -20,6 +20,7 @@ function App() {
           <Route path="/" element={<Index />} />
           <Route path="/es" element={<IndexEs />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/sign-in" element={<SignIn />} />
           <Route 
             path="/demo" 
             element={
