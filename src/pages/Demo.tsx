@@ -1,9 +1,18 @@
+
 import { NavbarCustom } from "@/components/NavbarCustom";
 import { useAuth } from "@/context/AuthContext"; 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { Bot, User, Mic, Send, Play } from "lucide-react";
+
+// Define API URL constants
+const OPENAI_API_URL = "http://localhost:5000"; // Update this as needed
+const BASE_API_URL = "http://localhost:5000"; // Update this as needed
 
 export default function Demo() {
   const { user, profile } = useAuth();
@@ -64,7 +73,11 @@ export default function Demo() {
       setMessages(prev => [...prev, {type: 'bot', content: data.response}]);
     } catch (error) {
       console.error('Error:', error);
-      toast.error('Error al comunicarse con el asistente');
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Error al comunicarse con el asistente"
+      });
       
       setMessages(prev => [...prev, {type: 'bot', content: 'Lo siento, estoy teniendo problemas para responder. Por favor, intenta de nuevo más tarde.'}]);
     } finally {
@@ -76,7 +89,10 @@ export default function Demo() {
   const runElevenLabsDemo = async () => {
     try {
       setIsProcessing(true);
-      toast.info('Iniciando ElevenLabs...');
+      toast({
+        title: "Iniciando ElevenLabs",
+        description: "Preparando la demo de voz..."
+      });
       
       const response = await fetch(`${BASE_API_URL}/api/run-prueba`, {
         method: 'POST',
@@ -92,11 +108,18 @@ export default function Demo() {
       const data = await response.json();
       console.log('ElevenLabs demo response:', data);
       
-      toast.success('Demo de ElevenLabs iniciado correctamente');
+      toast({
+        title: "Demo iniciado", 
+        description: "Demo de ElevenLabs iniciado correctamente"
+      });
       setMessages(prev => [...prev, {type: 'bot', content: 'Demo de ElevenLabs iniciado. ¡Ahora puedes interactuar con el asistente por voz!'}]);
     } catch (error) {
       console.error('Error:', error);
-      toast.error('Error al iniciar el demo de ElevenLabs');
+      toast({
+        variant: "destructive",
+        title: "Error", 
+        description: "Error al iniciar el demo de ElevenLabs"
+      });
     } finally {
       setIsProcessing(false);
     }

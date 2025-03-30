@@ -9,6 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { NavbarCustom } from "@/components/NavbarCustom";
 
 export default function SignIn() {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
@@ -75,19 +76,8 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <Link to="/" className="flex-shrink-0 flex items-center text-primary">
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                <span className="text-lg font-medium">Volver al inicio</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
+      <NavbarCustom />
+      
       <div className="flex items-center justify-center p-4 mt-8">
         <Card className="w-full max-w-md shadow-lg">
           <CardHeader className="space-y-1 text-center">
