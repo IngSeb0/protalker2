@@ -15,7 +15,7 @@ const IndexEs = () => {
       <main>
         <HeroEs />
         <HowItWorksEs />
-        <Benefits language="es" />
+        <Benefits />
         <PricingEs />
         <TestimonialsEs />
         <FAQEs />
