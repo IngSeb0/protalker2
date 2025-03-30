@@ -15,7 +15,7 @@ const HeroEs = () => {
               </span>
             </h1>
             <p className="text-lg md:text-xl text-gray-700 max-w-xl">
-              ProTalker AI utiliza tecnología avanzada para ayudarte a comunicarte mejor. Nunca más te quedes sin palabras.
+              ProTalker utiliza tecnología avanzada para ayudarte a comunicarte mejor. Nunca más te quedes sin palabras.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link to="/demo">
@@ -32,25 +32,6 @@ const HeroEs = () => {
                 </Button>
               </Link>
             </div>
-            <div className="flex items-center gap-4 pt-4">
-              <p className="text-gray-600 font-medium">
-                Más de 10,000 usuarios confían en nosotros
-              </p>
-              <div className="flex -space-x-3">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className={`w-9 h-9 rounded-full bg-gradient-to-br ${
-                      i % 3 === 0 ? "from-primary to-blue-400" : 
-                      i % 3 === 1 ? "from-secondary to-green-400" : 
-                      "from-accent to-red-300"
-                    } border-2 border-white flex items-center justify-center text-white text-xs`}
-                  >
-                    {i}
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
           <div className="md:w-1/2">
             <div className="relative">
@@ -60,7 +41,7 @@ const HeroEs = () => {
               <div className="relative bg-white p-2 rounded-2xl shadow-xl border border-gray-100">
                 <img
                   src="/lovable-uploads/e4c386bd-ed04-430c-a72e-a585e0ffdb2b.png"
-                  alt="ProTalker AI Demo"
+                  alt="ProTalker Demo"
                   className="rounded-xl w-full h-auto"
                 />
                 <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-white px-6 py-2 rounded-full shadow-md border border-gray-100">

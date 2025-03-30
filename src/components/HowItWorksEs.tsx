@@ -1,28 +1,28 @@
 
-import { Lightbulb, MessageSquare, LineChart } from "lucide-react";
+import { Target, MessageSquare, LineChart } from "lucide-react";
 
 const HowItWorksEs = () => {
   const steps = [
     {
       id: "01",
-      title: "Formula tu pregunta",
-      description: "Escribe tu duda o problema de comunicación de forma clara.",
-      icon: <Lightbulb size={24} className="text-secondary" />,
-      image: "/lovable-uploads/35305656-ed00-4cde-893e-6db3ff4b7aaf.png"
+      title: "Comparte tus objetivos de comunicación",
+      description: "Indícanos tus metas específicas para personalizar tu experiencia: entrevistas laborales, presentaciones académicas o discursos.",
+      icon: <Target size={24} className="text-secondary" />,
+      image: "/lovable-uploads/f9125a2e-1f9d-49f5-8d24-c33177a07de9.png"
     },
     {
       id: "02",
-      title: "Recibe sugerencias",
-      description: "ProTalker AI analiza tu mensaje y genera respuestas inteligentes.",
+      title: "Practica en situaciones realistas",
+      description: "Entrénate con escenarios específicos para tu contexto y recibe sugerencias de IA mientras hablas.",
       icon: <MessageSquare size={24} className="text-primary" />,
-      image: "/lovable-uploads/35083f51-4ac3-41bf-bc50-5ea287abbf42.png"
+      image: "/lovable-uploads/3257b863-0ee8-41ee-84ef-228bdee1d70c.png"
     },
     {
       id: "03",
-      title: "Comunica efectivamente",
-      description: "Selecciona la mejor respuesta y comunícate con confianza.",
+      title: "Recibe retroalimentación personalizada",
+      description: "Obtén análisis detallado sobre tu tono, claridad y efectividad para mejorar constantemente tu comunicación.",
       icon: <LineChart size={24} className="text-accent" />,
-      image: "/lovable-uploads/e4c386bd-ed04-430c-a72e-a585e0ffdb2b.png"
+      image: "/lovable-uploads/0454bf36-74c5-4e1e-86f5-8ff566d68fb4.png"
     },
   ];
 
@@ -33,7 +33,7 @@ const HowItWorksEs = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Cómo Funciona{" "}
             <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              ProTalker AI
+              ProTalker
             </span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
@@ -41,7 +41,7 @@ const HowItWorksEs = () => {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           {steps.map((step, index) => (
             <div key={step.id} className="flex flex-col md:flex-row gap-8 mb-16 items-center">
               <div className="w-full md:w-1/3">
