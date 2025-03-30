@@ -26,7 +26,7 @@ export default function SignIn() {
 
   useEffect(() => {
     if (user) {
-      navigate('/');
+      navigate('/perfil');
     }
   }, [user, navigate]);
 
@@ -39,7 +39,7 @@ export default function SignIn() {
       if (activeTab === "login") {
         const { error } = await signIn(email, password);
         if (!error) {
-          navigate('/');
+          navigate('/perfil');
         }
       } else {
         // Validar que las contraseñas coincidan
@@ -75,7 +75,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <NavbarCustom />
       
       <div className="flex items-center justify-center p-4 mt-8">
