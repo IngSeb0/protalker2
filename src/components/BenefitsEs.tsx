@@ -55,7 +55,7 @@ const BenefitsEs = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Beneficios de{" "}
             <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              ProTalker AI
+              ProTalker
             </span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
@@ -69,11 +69,11 @@ const BenefitsEs = () => {
               key={index}
               className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
             >
-              <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center mb-4 mx-auto">
                 {benefit.icon}
               </div>
-              <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
-              <p className="text-gray-600">{benefit.description}</p>
+              <h3 className="text-xl font-bold mb-2 text-center">{benefit.title}</h3>
+              <p className="text-gray-600 text-center">{benefit.description}</p>
             </div>
           ))}
         </div>

@@ -11,7 +11,7 @@ const HeroEs = () => {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
               Eleva tus conversaciones con{" "}
               <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                Inteligencia Artificial
+                ProTalker
               </span>
             </h1>
             <p className="text-lg md:text-xl text-gray-700 max-w-xl">
@@ -40,7 +40,7 @@ const HeroEs = () => {
               <div className="absolute top-1/3 right-10 w-20 h-20 bg-accent/30 rounded-full blur-xl"></div>
               <div className="relative bg-white p-2 rounded-2xl shadow-xl border border-gray-100">
                 <img
-                  src="/lovable-uploads/e4c386bd-ed04-430c-a72e-a585e0ffdb2b.png"
+                  src="/lovable-uploads/103c0469-8f7c-4921-8fa5-0e5d952f1e6c.png"
                   alt="ProTalker Demo"
                   className="rounded-xl w-full h-auto"
                 />

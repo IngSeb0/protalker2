@@ -78,7 +78,7 @@ const SignIn = () => {
             <img 
               src="/lovable-uploads/5ca03822-e2b4-4bd7-a6b6-81224f3fc870.png" 
               alt="ProTalker Logo" 
-              className="h-12 w-12" 
+              className="h-14 w-14" 
             />
             <span className="font-display font-semibold text-xl text-foreground">ProTalker</span>
           </a>
@@ -134,7 +134,7 @@ const SignIn = () => {
               
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-primary hover:bg-primary/90 text-white"
                 disabled={loading}
               >
                 {loading ? "Procesando..." : "Iniciar Sesión"}
@@ -176,7 +176,7 @@ const SignIn = () => {
               
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-primary hover:bg-primary/90 text-white"
                 disabled={loading}
               >
                 {loading ? "Procesando..." : "Crear Cuenta"}
