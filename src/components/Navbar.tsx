@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -44,7 +45,7 @@ const Navbar = () => {
           </div>
           
           <nav className="hidden md:flex items-center space-x-8">
-            {['Features', 'How It Works', 'Pricing', 'FAQ'].map((item) => (
+            {['Features', 'How It Works', 'Testimonials', 'Pricing', 'FAQ'].map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} 
@@ -56,8 +57,10 @@ const Navbar = () => {
           </nav>
           
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-sm">Sign In</Button>
-            <Button className="text-sm btn-hover-effect">Start Free Trial</Button>
+            <Link to="/signin">
+              <Button variant="ghost" className="text-sm">Iniciar Sesión</Button>
+            </Link>
+            <Button className="text-sm btn-hover-effect">Prueba Gratuita</Button>
           </div>
           
           <button 
@@ -73,7 +76,7 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-md transition-all duration-300 animate-slide-up p-4">
           <nav className="flex flex-col space-y-4 py-4">
-            {['Features', 'How It Works', 'Pricing', 'FAQ'].map((item) => (
+            {['Features', 'How It Works', 'Testimonials', 'Pricing', 'FAQ'].map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
@@ -84,8 +87,10 @@ const Navbar = () => {
               </a>
             ))}
             <div className="border-t border-border pt-4 mt-2 flex flex-col space-y-3 px-4">
-              <Button variant="outline" className="w-full justify-center">Sign In</Button>
-              <Button className="w-full justify-center">Start Free Trial</Button>
+              <Link to="/signin">
+                <Button variant="outline" className="w-full justify-center">Iniciar Sesión</Button>
+              </Link>
+              <Button className="w-full justify-center">Prueba Gratuita</Button>
             </div>
           </nav>
         </div>

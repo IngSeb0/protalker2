@@ -6,45 +6,45 @@ import { cn } from '@/lib/utils';
 const testimonials = [
   {
     id: 1,
-    content: "ProTalker has completely transformed my client communications. I save at least 10 hours weekly with its smart suggestions, and my response quality has significantly improved.",
-    author: "Sarah Johnson",
-    position: "Marketing Director",
-    company: "Elevate Digital",
+    content: "Gracias a ProTalker conseguí el trabajo de mis sueños. Practiqué mis entrevistas durante una semana y noté cómo mi confianza aumentaba con cada sesión. La retroalimentación personalizada fue clave para mi éxito.",
+    author: "Sara Martínez",
+    position: "Analista de Marketing",
+    company: "Global Media",
     avatar: "https://randomuser.me/api/portraits/women/32.jpg",
     rating: 5
   },
   {
     id: 2,
-    content: "As a customer support lead, I needed a tool that could help my team respond quickly without sacrificing quality. ProTalker delivered exactly that, cutting our response time by 40%.",
-    author: "Michael Chen",
-    position: "Customer Success Manager",
-    company: "SupportHero",
+    content: "Como estudiante universitario, tenía mucha ansiedad por mis presentaciones orales. ProTalker me ayudó a estructurar mis ideas y a practicar en entornos realistas. Mi última exposición recibió la mejor nota del curso.",
+    author: "Miguel Chen",
+    position: "Estudiante de Ingeniería",
+    company: "Universidad Nacional",
     avatar: "https://randomuser.me/api/portraits/men/22.jpg",
     rating: 5
   },
   {
     id: 3,
-    content: "The context awareness is what sets ProTalker apart. It understands the nuances of professional communication in a way no other tool has. It's like having a communication expert by your side.",
-    author: "Emma Thompson",
-    position: "Executive Assistant",
-    company: "Global Enterprises",
+    content: "La capacidad de adaptarse a diferentes contextos es lo que hace especial a ProTalker. Lo he usado tanto para entrevistas de trabajo como para preparar conferencias profesionales, con excelentes resultados en ambos casos.",
+    author: "Elena Thompson",
+    position: "Directora de Recursos Humanos",
+    company: "Tech Solutions",
     avatar: "https://randomuser.me/api/portraits/women/44.jpg",
     rating: 5
   },
   {
     id: 4,
-    content: "I was skeptical about AI tools, but ProTalker proved me wrong. It learns my communication style and offers suggestions that sound authentically like me, just better crafted.",
-    author: "David Rodriguez",
-    position: "Freelance Consultant",
-    company: "Self-employed",
+    content: "Era escéptico sobre herramientas de IA, pero ProTalker superó mis expectativas. El análisis de mis patrones de comunicación y las sugerencias personalizadas realmente mejoraron mi forma de expresarme.",
+    author: "David Rodríguez",
+    position: "Consultor Independiente",
+    company: "Autónomo",
     avatar: "https://randomuser.me/api/portraits/men/46.jpg",
     rating: 4
   },
   {
     id: 5,
-    content: "Our sales team's performance improved by 28% after implementing ProTalker. The smart response suggestions help close deals faster with more personalized follow-ups.",
+    content: "Mi equipo de ventas mejoró un 28% después de implementar ProTalker como herramienta de entrenamiento. Las simulaciones realistas de clientes difíciles nos prepararon para cualquier situación.",
     author: "Jennifer Liu",
-    position: "Sales Director",
+    position: "Directora de Ventas",
     company: "NextGen Solutions",
     avatar: "https://randomuser.me/api/portraits/women/68.jpg",
     rating: 5
@@ -117,10 +117,10 @@ const Testimonials = () => {
     <section id="testimonials" className="bg-gradient-to-b from-secondary/30 to-background">
       <div className="section-container">
         <div className="text-center mb-16">
-          <div className="chip mb-6">Success Stories</div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">What Our Users Say</h2>
+          <div className="chip mb-6">Historias de Éxito</div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Lo que dicen nuestros usuarios</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Discover how professionals are transforming their communication with ProTalker AI.
+            Descubre cómo profesionales y estudiantes están transformando su comunicación con ProTalker AI.
           </p>
         </div>
         

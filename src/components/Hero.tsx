@@ -42,14 +42,14 @@ const Hero = () => {
       <div className="absolute inset-0 z-0 bg-grid-pattern opacity-20"></div>
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-background to-background/0"></div>
       <div className="section-container relative z-20 flex flex-col items-center justify-center pt-20">
-        <div className="chip mb-6 opacity-0 animate-fade-in">Revolutionary AI Communication Tool</div>
+        <div className="chip mb-6 opacity-0 animate-fade-in">Entrenamiento para comunicación efectiva</div>
         
         <h1 
           ref={titleRef}
           className="text-4xl md:text-5xl lg:text-7xl font-bold text-center mb-6 max-w-4xl opacity-0 animate-fade-in"
           style={{ animationDelay: '0.2s' }}
         >
-          Elevate Your Conversations With <span className="text-primary">ProTalker AI</span>
+          Mejora tu comunicación para <span className="text-primary">entrevistas y exposiciones</span>
         </h1>
         
         <div 
@@ -58,42 +58,42 @@ const Hero = () => {
           style={{ animationDelay: '0.4s' }}
         >
           <p className="text-xl text-center text-muted-foreground max-w-2xl mb-8">
-            Transform the way you communicate with cutting-edge AI that understands context, tone, and intent, helping you craft perfect responses every time.
+            Practica en un entorno realista con IA para dominar entrevistas laborales, presentaciones académicas y discursos profesionales. Reduce tu ansiedad y aumenta tu confianza.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Button size="lg" className="px-8 py-6 rounded-full btn-hover-effect text-base">
-              Start Free Trial
+              Comienza tu entrenamiento
               <ArrowRight size={18} className="ml-2" />
             </Button>
             <Button variant="outline" size="lg" className="px-8 py-6 rounded-full btn-hover-effect text-base">
-              See Demo
+              Ver demo
             </Button>
           </div>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-muted-foreground">
             <div className="flex items-center">
               <CheckCircle size={16} className="text-primary mr-2" />
-              <span>No credit card required</span>
+              <span>No necesitas tarjeta de crédito</span>
             </div>
             <div className="flex items-center">
               <CheckCircle size={16} className="text-primary mr-2" />
-              <span>14-day free trial</span>
+              <span>Prueba gratuita por 14 días</span>
             </div>
             <div className="flex items-center">
               <CheckCircle size={16} className="text-primary mr-2" />
-              <span>Cancel anytime</span>
+              <span>Cancela cuando quieras</span>
             </div>
           </div>
         </div>
         
         <div 
-          className="max-w-5xl mt-16 relative w-full rounded-xl overflow-hidden shadow-glass border border-white/20 opacity-0 animate-fade-in"
+          className="max-w-5xl mt-16 relative w-full rounded-xl overflow-hidden shadow-glass opacity-0 animate-fade-in"
           style={{ animationDelay: '0.6s' }}
         >
           <div className="relative w-full aspect-[16/9]">
             <img 
-              src="/lovable-uploads/2671a94f-6a2d-4e21-9a7c-da22bb6df3c3.png" 
+              src="/lovable-uploads/a463166e-145d-41ca-a626-c5dbeacf0140.png" 
               alt="ProTalker AI Interface" 
               className="w-full h-full object-cover"
             />
