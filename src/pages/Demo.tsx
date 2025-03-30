@@ -1,11 +1,15 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Mic, Send, User, Bot, LogOut } from 'lucide-react';
+import { Mic, Send, User, Bot, LogOut, Play } from 'lucide-react';
+import { toast } from 'sonner';
+
+const BASE_API_URL = 'http://localhost:5000'; // Change this to your actual API URL
+const OPENAI_API_URL = 'http://localhost:5000'; // Change this to your OpenAI server URL
 
 const Demo = () => {
   const { user, loading, signOut } = useAuth();
@@ -14,6 +18,7 @@ const Demo = () => {
     {type: 'bot', content: '¡Hola! Soy tu asistente de entrenamiento. ¿En qué tipo de situación quieres practicar hoy? ¿Una entrevista laboral, una presentación académica o un discurso profesional?'}
   ]);
   const [isListening, setIsListening] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   
@@ -30,29 +35,70 @@ const Demo = () => {
     }
   }, [messages]);
   
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!message.trim()) return;
     
     // Add user message
     setMessages(prev => [...prev, {type: 'user', content: message}]);
+    setIsProcessing(true);
     
-    // Simulate bot response
-    setTimeout(() => {
-      // This would be replaced with an actual API call to your backend
-      const botResponses = [
-        "¡Excelente! Para una entrevista laboral, practiquemos algunas preguntas comunes. ¿Puedes hablarme de tu experiencia profesional hasta ahora?",
-        "Entiendo que quieres mejorar en presentaciones académicas. ¿Sobre qué tema sería tu presentación? Así podemos preparar un escenario más específico.",
-        "Para un discurso profesional, es importante definir primero el objetivo. ¿Quieres persuadir, informar o inspirar a tu audiencia?",
-        "Tu respuesta muestra confianza, pero trata de ser más específico con ejemplos concretos que respalden tus puntos principales.",
-        "Buen punto. Ahora, ¿cómo responderías si te preguntan sobre tus debilidades o áreas de mejora?",
-        "Has articulado bien tus ideas. Considera usar un tono más variado para mantener el interés de la audiencia."
-      ];
+    try {
+      // Call OpenAI API
+      const response = await fetch(`${OPENAI_API_URL}/api/openai-chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: message }),
+      });
       
-      const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
-      setMessages(prev => [...prev, {type: 'bot', content: randomResponse}]);
-    }, 1000);
-    
-    setMessage('');
+      if (!response.ok) {
+        throw new Error('Error al comunicarse con el asistente');
+      }
+      
+      const data = await response.json();
+      
+      // Add assistant response
+      setMessages(prev => [...prev, {type: 'bot', content: data.response}]);
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error al comunicarse con el asistente');
+      
+      // Fallback response if API fails
+      setMessages(prev => [...prev, {type: 'bot', content: 'Lo siento, estoy teniendo problemas para responder. Por favor, intenta de nuevo más tarde.'}]);
+    } finally {
+      setIsProcessing(false);
+      setMessage('');
+    }
+  };
+  
+  const runElevenLabsDemo = async () => {
+    try {
+      setIsProcessing(true);
+      toast.info('Iniciando ElevenLabs...');
+      
+      const response = await fetch(`${BASE_API_URL}/api/run-prueba`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al ejecutar el demo de ElevenLabs');
+      }
+      
+      const data = await response.json();
+      console.log('ElevenLabs demo response:', data);
+      
+      toast.success('Demo de ElevenLabs iniciado correctamente');
+      setMessages(prev => [...prev, {type: 'bot', content: 'Demo de ElevenLabs iniciado. ¡Ahora puedes interactuar con el asistente por voz!'}]);
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error al iniciar el demo de ElevenLabs');
+    } finally {
+      setIsProcessing(false);
+    }
   };
   
   const toggleListening = () => {
@@ -154,6 +200,7 @@ const Demo = () => {
                     variant={isListening ? "destructive" : "secondary"}
                     onClick={toggleListening}
                     className="flex-shrink-0"
+                    disabled={isProcessing}
                   >
                     <Mic size={18} />
                   </Button>
@@ -163,6 +210,7 @@ const Demo = () => {
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Escribe tu mensaje..."
                     className="resize-none min-h-[2.5rem]"
+                    disabled={isProcessing}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -174,7 +222,7 @@ const Demo = () => {
                   <Button 
                     size="icon" 
                     onClick={handleSendMessage}
-                    disabled={!message.trim()}
+                    disabled={!message.trim() || isProcessing}
                     className="flex-shrink-0"
                   >
                     <Send size={18} />
@@ -281,6 +329,21 @@ const Demo = () => {
                   </div>
                 </div>
               </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-md p-4">
+              <h3 className="font-medium mb-3">Demo de voz con ElevenLabs</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Inicia el demo para interactuar con el asistente utilizando voz (powered by ElevenLabs)
+              </p>
+              <Button 
+                onClick={runElevenLabsDemo} 
+                className="w-full flex items-center justify-center"
+                disabled={isProcessing}
+              >
+                <Play className="mr-2 h-4 w-4" />
+                Iniciar demo de voz
+              </Button>
             </div>
           </div>
         </div>
