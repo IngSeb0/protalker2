@@ -22,6 +22,9 @@ export default {
       fontFamily: {
         'display': ['Inter', 'sans-serif'], // Añadimos la definición de font-display
       },
+      boxShadow: {
+        'soft': '0 4px 12px rgba(0, 0, 0, 0.05)', // Añadimos la definición de shadow-soft
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
