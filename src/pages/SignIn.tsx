@@ -1,192 +1,152 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from '@/components/ui/use-toast';
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { useAuth } from '@/context/AuthContext';
+import { Loader2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const SignIn = () => {
+export default function SignIn() {
+  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
-  
-  const handleLogin = async (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    
+    setIsLoading(true);
+
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      
-      if (error) throw error;
-      
-      toast({
-        title: "¡Bienvenido!",
-        description: "Has iniciado sesión correctamente",
-      });
-      
-      navigate('/demo');
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "No se pudo iniciar sesión",
-        variant: "destructive",
-      });
+      if (activeTab === "login") {
+        const { error } = await signIn(email, password);
+        if (!error) {
+          navigate('/');
+        }
+      } else {
+        const { error } = await signUp(email, password);
+        if (!error) {
+          // On successful signup, switch to login tab
+          setActiveTab("login");
+        }
+      }
     } finally {
-      setLoading(false);
-    }
-  };
-  
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      
-      if (error) throw error;
-      
-      toast({
-        title: "¡Cuenta creada!",
-        description: "Revisa tu correo para confirmar tu cuenta",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "No se pudo crear la cuenta",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <a href="/" className="flex items-center justify-center space-x-2 mb-6">
-            <img 
-              src="/lovable-uploads/5ca03822-e2b4-4bd7-a6b6-81224f3fc870.png" 
-              alt="ProTalker Logo" 
-              className="h-14 w-14" 
-            />
-            <span className="font-display font-semibold text-xl text-foreground">ProTalker</span>
-          </a>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Accede a tu cuenta
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Y comienza a mejorar tus habilidades de comunicación
-          </p>
-        </div>
-        
-        <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-100 p-4">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-bold">ProTalker</CardTitle>
+          <CardDescription>
+            {activeTab === "login" 
+              ? "Inicia sesión para continuar" 
+              : "Crea una cuenta nueva"}
+          </CardDescription>
+        </CardHeader>
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "login" | "register")} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-            <TabsTrigger value="register">Crear Cuenta</TabsTrigger>
+            <TabsTrigger value="register">Registrarse</TabsTrigger>
           </TabsList>
           
           <TabsContent value="login">
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div>
-                <Label htmlFor="email">Correo electrónico</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="mt-1 block w-full"
-                  placeholder="tu@email.com"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="password">Contraseña</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="mt-1 block w-full"
-                  placeholder="************"
-                />
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="text-sm">
-                  <a href="#" className="text-primary hover:text-primary/80">
-                    ¿Olvidaste tu contraseña?
-                  </a>
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Correo electrónico</Label>
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    placeholder="tu@email.com" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
                 </div>
-              </div>
-              
-              <Button
-                type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-white"
-                disabled={loading}
-              >
-                {loading ? "Procesando..." : "Iniciar Sesión"}
-              </Button>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Contraseña</Label>
+                    <Link to="/reset-password" className="text-sm text-blue-500 hover:underline">
+                      ¿Olvidaste tu contraseña?
+                    </Link>
+                  </div>
+                  <Input 
+                    id="password" 
+                    type="password" 
+                    placeholder="••••••••" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Iniciando sesión...
+                    </>
+                  ) : (
+                    'Iniciar Sesión'
+                  )}
+                </Button>
+              </CardFooter>
             </form>
           </TabsContent>
           
           <TabsContent value="register">
-            <form onSubmit={handleSignUp} className="space-y-6">
-              <div>
-                <Label htmlFor="register-email">Correo electrónico</Label>
-                <Input
-                  id="register-email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="mt-1 block w-full"
-                  placeholder="tu@email.com"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="register-password">Contraseña</Label>
-                <Input
-                  id="register-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="mt-1 block w-full"
-                  placeholder="************"
-                  minLength={6}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Mínimo 6 caracteres
-                </p>
-              </div>
-              
-              <Button
-                type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-white"
-                disabled={loading}
-              >
-                {loading ? "Procesando..." : "Crear Cuenta"}
-              </Button>
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Correo electrónico</Label>
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    placeholder="tu@email.com" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Contraseña</Label>
+                  <Input 
+                    id="password" 
+                    type="password" 
+                    placeholder="••••••••" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <p className="text-xs text-gray-500">
+                    La contraseña debe tener al menos 6 caracteres
+                  </p>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creando cuenta...
+                    </>
+                  ) : (
+                    'Crear Cuenta'
+                  )}
+                </Button>
+              </CardFooter>
             </form>
           </TabsContent>
         </Tabs>
-      </div>
+      </Card>
     </div>
   );
-};
-
-export default SignIn;
+}
