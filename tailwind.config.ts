@@ -19,6 +19,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        'display': ['Inter', 'sans-serif'], // Añadimos la definición de font-display
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
