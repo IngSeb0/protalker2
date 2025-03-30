@@ -17,6 +17,21 @@ type BenefitsProps = {
   language?: 'en' | 'es';
 };
 
+// Define feature types for both languages
+type EnFeature = {
+  icon: React.ReactNode;
+  customIcon: React.ReactNode;
+  title: string;
+  description: string;
+};
+
+type EsFeature = {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  customIcon?: React.ReactNode; // Make customIcon optional for Spanish
+};
+
 const Benefits = ({ language = 'en' }: BenefitsProps) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const featureRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -105,7 +120,7 @@ const Benefits = ({ language = 'en' }: BenefitsProps) => {
           title: "Time-Saving Automation",
           description: "Save hours weekly with automated suggestions for frequently asked questions and common responses."
         }
-      ]
+      ] as EnFeature[]
     },
     es: {
       sectionId: 'beneficios',
@@ -143,7 +158,7 @@ const Benefits = ({ language = 'en' }: BenefitsProps) => {
           title: "Fácil de usar",
           description: "Interfaz intuitiva diseñada para ser utilizada por cualquier persona."
         }
-      ]
+      ] as EsFeature[]
     }
   };
 
@@ -213,7 +228,7 @@ const Benefits = ({ language = 'en' }: BenefitsProps) => {
             <div
               key={index}
               ref={el => featureRefs.current[index] = el}
-              className={language === 'en' ? "feature-card opacity-0" : "bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow opacity-0"}
+              className={language === 'en' ? "feature-card opacity-0" : "bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow opacity-0 flex flex-col items-center"}
               style={{ transitionDelay: `${index * 100}ms` }}
             >
               {language === 'en' ? (
@@ -221,7 +236,7 @@ const Benefits = ({ language = 'en' }: BenefitsProps) => {
                   {feature.customIcon}
                 </div>
               ) : (
-                <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center mb-4 mx-auto">
+                <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center mb-4">
                   {feature.icon}
                 </div>
               )}

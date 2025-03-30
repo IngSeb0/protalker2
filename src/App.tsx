@@ -4,6 +4,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./App.css";
 import { Toaster } from "./components/ui/toaster";
 import IndexEs from "./pages/IndexEs";
+import Index from "./pages/Index";
 import SignIn from "./pages/SignIn";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
@@ -12,6 +13,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <IndexEs />,
+  },
+  {
+    path: "/en",
+    element: <Index />,
   },
   {
     path: "/sign-in",
