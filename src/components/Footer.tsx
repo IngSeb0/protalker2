@@ -1,97 +1,147 @@
 
-import React from 'react';
-import { ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-background border-t border-border">
-      <div className="section-container pt-16 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          <div className="lg:col-span-1">
-            <div className="flex items-center space-x-2 mb-5">
-              <span className="h-8 w-8 bg-primary rounded-md flex items-center justify-center">
-                <span className="text-white font-bold">P</span>
+    <footer className="bg-gray-900 text-white pt-16 pb-8 px-6 md:px-12">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+          <div className="col-span-1">
+            <div className="flex items-center mb-4">
+              <img
+                src="/lovable-uploads/e4c386bd-ed04-430c-a72e-a585e0ffdb2b.png"
+                alt="ProTalker Logo"
+                className="h-10 w-10 mr-3 rounded-lg bg-white"
+              />
+              <span className="text-xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                ProTalker AI
               </span>
-              <span className="font-display font-semibold text-lg text-foreground">ProTalker</span>
             </div>
-            <p className="text-muted-foreground mb-6">
-              Transforming everyday communication with cutting-edge AI technology. Experience the future of conversation.
+            <p className="text-gray-400 mb-6">
+              Transformando la forma en que nos comunicamos con tecnología de vanguardia.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                </svg>
+              <a
+                href="#"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <Facebook size={20} />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                </svg>
+              <a
+                href="#"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <Twitter size={20} />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
+              <a
+                href="#"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <Instagram size={20} />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                  <rect x="2" y="9" width="4" height="12"></rect>
-                  <circle cx="4" cy="4" r="2"></circle>
-                </svg>
+              <a
+                href="#"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <Linkedin size={20} />
               </a>
             </div>
           </div>
-          
+
           <div>
-            <h3 className="font-semibold text-lg mb-4">Product</h3>
-            <ul className="space-y-3">
-              {['Features', 'Integrations', 'Pricing', 'Updates', 'Beta Program', 'Roadmap'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors">{item}</a>
-                </li>
-              ))}
+            <h3 className="font-bold text-lg mb-4">Producto</h3>
+            <ul className="space-y-2">
+              <li>
+                <a href="#como-funciona" className="text-gray-400 hover:text-white transition-colors">
+                  Características
+                </a>
+              </li>
+              <li>
+                <a href="#precios" className="text-gray-400 hover:text-white transition-colors">
+                  Precios
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Integraciones
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Hoja de ruta
+                </a>
+              </li>
             </ul>
           </div>
-          
+
           <div>
-            <h3 className="font-semibold text-lg mb-4">Company</h3>
-            <ul className="space-y-3">
-              {['About Us', 'Careers', 'Blog', 'Press', 'Partners', 'Contact Us'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors">{item}</a>
-                </li>
-              ))}
+            <h3 className="font-bold text-lg mb-4">Recursos</h3>
+            <ul className="space-y-2">
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Tutoriales
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Documentación
+                </a>
+              </li>
+              <li>
+                <a href="#faq" className="text-gray-400 hover:text-white transition-colors">
+                  FAQ
+                </a>
+              </li>
             </ul>
           </div>
-          
-          <div className="lg:col-span-1">
-            <h3 className="font-semibold text-lg mb-4">Subscribe to our newsletter</h3>
-            <p className="text-muted-foreground mb-4">Get the latest updates and news directly in your inbox.</p>
-            <div className="flex space-x-2">
-              <div className="flex-grow">
-                <Input placeholder="Enter your email" type="email" className="h-10" />
-              </div>
-              <Button className="h-10 px-3" aria-label="Subscribe">
-                <ChevronRight size={16} />
-              </Button>
-            </div>
+
+          <div>
+            <h3 className="font-bold text-lg mb-4">Compañía</h3>
+            <ul className="space-y-2">
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Sobre nosotros
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Contacto
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Empleo
+                </a>
+              </li>
+              <li>
+                <Link to="/sign-in" className="text-gray-400 hover:text-white transition-colors">
+                  Iniciar Sesión
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
-        
-        <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-            © {new Date().getFullYear()} ProTalker AI. All rights reserved.
+
+        <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-500 text-sm order-2 md:order-1 mt-4 md:mt-0">
+            &copy; {new Date().getFullYear()} ProTalker AI. Todos los derechos reservados.
           </p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-primary transition-colors">Cookies</a>
-            <a href="#" className="hover:text-primary transition-colors">Security</a>
+          <div className="flex space-x-6 order-1 md:order-2">
+            <a href="#" className="text-gray-500 hover:text-white text-sm transition-colors">
+              Términos de Servicio
+            </a>
+            <a href="#" className="text-gray-500 hover:text-white text-sm transition-colors">
+              Política de Privacidad
+            </a>
+            <a href="#" className="text-gray-500 hover:text-white text-sm transition-colors">
+              Cookies
+            </a>
           </div>
         </div>
       </div>

@@ -1,191 +1,87 @@
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
-const testimonials = [
-  {
-    id: 1,
-    content: "Gracias a ProTalker conseguí el trabajo de mis sueños. Practiqué mis entrevistas durante una semana y noté cómo mi confianza aumentaba con cada sesión. La retroalimentación personalizada fue clave para mi éxito.",
-    author: "Sara Martínez",
-    position: "Analista de Marketing",
-    company: "Global Media",
-    avatar: "https://randomuser.me/api/portraits/women/32.jpg",
-    rating: 5
-  },
-  {
-    id: 2,
-    content: "Como estudiante universitario, tenía mucha ansiedad por mis presentaciones orales. ProTalker me ayudó a estructurar mis ideas y a practicar en entornos realistas. Mi última exposición recibió la mejor nota del curso.",
-    author: "Miguel Chen",
-    position: "Estudiante de Ingeniería",
-    company: "Universidad Nacional",
-    avatar: "https://randomuser.me/api/portraits/men/22.jpg",
-    rating: 5
-  },
-  {
-    id: 3,
-    content: "La capacidad de adaptarse a diferentes contextos es lo que hace especial a ProTalker. Lo he usado tanto para entrevistas de trabajo como para preparar conferencias profesionales, con excelentes resultados en ambos casos.",
-    author: "Elena Thompson",
-    position: "Directora de Recursos Humanos",
-    company: "Tech Solutions",
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    rating: 5
-  },
-  {
-    id: 4,
-    content: "Era escéptico sobre herramientas de IA, pero ProTalker superó mis expectativas. El análisis de mis patrones de comunicación y las sugerencias personalizadas realmente mejoraron mi forma de expresarme.",
-    author: "David Rodríguez",
-    position: "Consultor Independiente",
-    company: "Autónomo",
-    avatar: "https://randomuser.me/api/portraits/men/46.jpg",
-    rating: 4
-  },
-  {
-    id: 5,
-    content: "Mi equipo de ventas mejoró un 28% después de implementar ProTalker como herramienta de entrenamiento. Las simulaciones realistas de clientes difíciles nos prepararon para cualquier situación.",
-    author: "Jennifer Liu",
-    position: "Directora de Ventas",
-    company: "NextGen Solutions",
-    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-    rating: 5
-  }
-];
+import { Star } from "lucide-react";
 
 const Testimonials = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(3);
-  const testimonialsRef = useRef<HTMLDivElement>(null);
-  
-  const handlePrev = () => {
-    setActiveIndex((prev) => (prev === 0 ? testimonials.length - visibleCount : prev - 1));
-  };
-  
-  const handleNext = () => {
-    setActiveIndex((prev) => (prev === testimonials.length - visibleCount ? 0 : prev + 1));
-  };
-  
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setVisibleCount(1);
-      } else if (window.innerWidth < 1024) {
-        setVisibleCount(2);
-      } else {
-        setVisibleCount(3);
-      }
-      
-      // Reset active index if necessary
-      if (activeIndex > testimonials.length - visibleCount) {
-        setActiveIndex(testimonials.length - visibleCount);
-      }
-    };
-    
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [activeIndex]);
-  
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-slide-up');
-          entry.target.classList.remove('opacity-0');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.1
-    });
-    
-    if (testimonialsRef.current) {
-      observer.observe(testimonialsRef.current);
-    }
-    
-    return () => {
-      if (testimonialsRef.current) {
-        observer.unobserve(testimonialsRef.current);
-      }
-    };
-  }, []);
+  const testimonials = [
+    {
+      id: 1,
+      name: "María Rodríguez",
+      title: "Gerente de Marketing",
+      company: "TechCorp",
+      avatar: "/lovable-uploads/5600b678-b324-4463-9536-690d09c7bef8.png",
+      testimonial:
+        "ProTalker ha transformado mi forma de comunicarme en reuniones importantes. Ahora puedo responder con confianza y claridad a preguntas difíciles.",
+      rating: 5,
+    },
+    {
+      id: 2,
+      name: "Carlos Hernández",
+      title: "Consultor de Negocios",
+      company: "Estrategias Globales",
+      avatar: "/lovable-uploads/35083f51-4ac3-41bf-bc50-5ea287abbf42.png",
+      testimonial:
+        "Solía pasar horas preparando comunicaciones importantes. Con ProTalker, el proceso es rápido y los resultados son incluso mejores que antes.",
+      rating: 5,
+    },
+    {
+      id: 3,
+      name: "Laura González",
+      title: "Profesora Universitaria",
+      company: "Universidad Nacional",
+      avatar: "/lovable-uploads/a463166e-145d-41ca-a626-c5dbeacf0140.png",
+      testimonial:
+        "Como educadora, valoro herramientas que mejoran la comunicación. ProTalker no solo me ayuda con mis clases sino también con mis investigaciones.",
+      rating: 4,
+    },
+  ];
 
   return (
-    <section id="testimonials" className="bg-gradient-to-b from-secondary/30 to-background">
-      <div className="section-container">
+    <section id="testimonios" className="py-16 md:py-24 px-6 md:px-12">
+      <div className="container mx-auto">
         <div className="text-center mb-16">
-          <div className="chip mb-6">Historias de Éxito</div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Lo que dicen nuestros usuarios</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Descubre cómo profesionales y estudiantes están transformando su comunicación con ProTalker AI.
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Lo que dicen nuestros{" "}
+            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+              Usuarios
+            </span>
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Miles de profesionales confían en ProTalker para mejorar su comunicación diaria. Esto es lo que algunos de ellos dicen.
           </p>
         </div>
-        
-        <div 
-          ref={testimonialsRef}
-          className="opacity-0 relative"
-        >
-          <div className="relative overflow-hidden">
-            <div 
-              className="flex transition-transform duration-500"
-              style={{ transform: `translateX(-${activeIndex * (100 / visibleCount)}%)` }}
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {testimonials.map((testimonial) => (
+            <div
+              key={testimonial.id}
+              className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col h-full hover:shadow-md transition-shadow"
             >
-              {testimonials.map((testimonial) => (
-                <div 
-                  key={testimonial.id}
-                  className={cn(
-                    "w-full md:w-1/2 lg:w-1/3 flex-shrink-0 p-4",
-                  )}
-                >
-                  <div className="testimonial-card h-full flex flex-col">
-                    <div className="flex mb-4">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={16}
-                          className={cn(
-                            i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
-                          )}
-                        />
-                      ))}
-                    </div>
-                    <p className="text-foreground/90 mb-6 flex-grow">{testimonial.content}</p>
-                    <div className="flex items-center">
-                      <img 
-                        src={testimonial.avatar} 
-                        alt={testimonial.author}
-                        className="w-12 h-12 rounded-full mr-4 object-cover"
-                      />
-                      <div>
-                        <h4 className="font-medium">{testimonial.author}</h4>
-                        <p className="text-sm text-muted-foreground">{testimonial.position}, {testimonial.company}</p>
-                      </div>
-                    </div>
-                  </div>
+              <div className="flex items-center mb-4">
+                <img
+                  src={testimonial.avatar}
+                  alt={testimonial.name}
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
+                <div>
+                  <h3 className="font-bold text-lg">{testimonial.name}</h3>
+                  <p className="text-gray-600 text-sm">{testimonial.title}, {testimonial.company}</p>
                 </div>
-              ))}
+              </div>
+              <div className="flex items-center mb-4">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Star
+                    key={index}
+                    className={`w-4 h-4 ${
+                      index < testimonial.rating
+                        ? "text-yellow-400 fill-yellow-400"
+                        : "text-gray-300"
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="text-gray-700 flex-grow">"{testimonial.testimonial}"</p>
             </div>
-          </div>
-          
-          <div className="flex justify-center mt-8 space-x-4">
-            <button 
-              onClick={handlePrev}
-              className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-colors"
-              aria-label="Previous testimonial"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button 
-              onClick={handleNext}
-              className="p-2 rounded-full border border-border hover:border-primary hover:text-primary transition-colors"
-              aria-label="Next testimonial"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
+          ))}
         </div>
       </div>
     </section>
