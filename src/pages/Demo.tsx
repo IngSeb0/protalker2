@@ -91,34 +91,49 @@ export default function Demo() {
       setIsProcessing(true);
       toast({
         title: "Iniciando ElevenLabs",
-        description: "Preparando la demo de voz..."
+        description: "Preparando la demo de voz...",
       });
-      
+  
+      console.log("Attempting to start conversation by running prueba.py...");
       const response = await fetch(`${BASE_API_URL}/api/run-prueba`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: "POST",
       });
-      
-      if (!response.ok) {
-        throw new Error('Error al ejecutar el demo de ElevenLabs');
-      }
-      
+  
       const data = await response.json();
-      console.log('ElevenLabs demo response:', data);
-      
-      toast({
-        title: "Demo iniciado", 
-        description: "Demo de ElevenLabs iniciado correctamente"
-      });
-      setMessages(prev => [...prev, {type: 'bot', content: 'Demo de ElevenLabs iniciado. ¡Ahora puedes interactuar con el asistente por voz!'}]);
+  
+      if (response.ok) {
+        console.log("Conversation started successfully:", data.message);
+        setMessages((prev) => [
+          ...prev,
+          { type: "bot", content: "Demo de ElevenLabs iniciado. ¡Ahora puedes interactuar con el asistente por voz!" },
+          { type: "bot", content: `Output: ${data.output}` },
+        ]);
+        toast({
+          title: "Demo iniciado",
+          description: "Demo de ElevenLabs iniciado correctamente",
+        });
+      } else {
+        console.error("Error from backend:", data.error);
+        setMessages((prev) => [
+          ...prev,
+          { type: "bot", content: `Error: ${data.error}` },
+        ]);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Error al iniciar el demo de ElevenLabs",
+        });
+      }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error starting conversation:", error);
+      setMessages((prev) => [
+        ...prev,
+        { type: "bot", content: `Error: ${error.message}` },
+      ]);
       toast({
         variant: "destructive",
-        title: "Error", 
-        description: "Error al iniciar el demo de ElevenLabs"
+        title: "Error",
+        description: "Error al iniciar el demo de ElevenLabs",
       });
     } finally {
       setIsProcessing(false);

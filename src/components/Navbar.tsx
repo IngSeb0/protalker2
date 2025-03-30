@@ -1,10 +1,13 @@
-
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+import { UserMenu } from "./UserMenu";
+import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Cambia esto por tu lógica de autenticación real
+  const navigate = useNavigate();
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -19,135 +22,109 @@ const Navbar = () => {
             alt="ProTalker Logo"
             className="h-10 w-10 mr-2 rounded-lg"
           />
-          <span className="text-xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+          <Link
+            to="/"
+            className="text-xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"
+          >
             ProTalker AI
-          </span>
+          </Link>
         </div>
 
         <div className="hidden md:flex items-center space-x-6">
-          <a href="#" className="text-gray-700 hover:text-primary font-medium">
-            Inicio
-          </a>
-          <a href="#como-funciona" className="text-gray-700 hover:text-primary font-medium">
+          <Link to="#como-funciona" className="text-gray-700 hover:text-primary font-medium">
             Cómo Funciona
-          </a>
-          <a href="#beneficios" className="text-gray-700 hover:text-primary font-medium">
+          </Link>
+          <Link to="#beneficios" className="text-gray-700 hover:text-primary font-medium">
             Beneficios
-          </a>
-          <a href="#precios" className="text-gray-700 hover:text-primary font-medium">
+          </Link>
+          <Link to="#precios" className="text-gray-700 hover:text-primary font-medium">
             Precios
-          </a>
-          <a href="#testimonios" className="text-gray-700 hover:text-primary font-medium">
+          </Link>
+          <Link to="#testimonios" className="text-gray-700 hover:text-primary font-medium">
             Testimonios
-          </a>
-          <a href="#faq" className="text-gray-700 hover:text-primary font-medium">
+          </Link>
+          <Link to="#faq" className="text-gray-700 hover:text-primary font-medium">
             FAQ
-          </a>
-        </div>
-
-        <div className="hidden md:flex items-center space-x-2">
-          <Link to="/sign-in">
-            <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white">
-              Iniciar Sesión
-            </Button>
-          </Link>
-          <Link to="/demo">
-            <Button className="bg-primary hover:bg-primary/90 text-white">
-              Probar Demo
-            </Button>
           </Link>
         </div>
 
-        <button
-          className="md:hidden text-gray-700 focus:outline-none"
-          onClick={toggleNav}
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {isNavOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
-        </button>
-      </div>
-
-      {isNavOpen && (
-        <div className="md:hidden mt-2 py-2 bg-white shadow-md rounded-lg absolute top-16 left-4 right-4">
-          <div className="flex flex-col space-y-3 px-4 py-2">
-            <a
-              href="#"
-              className="text-gray-700 hover:text-primary font-medium py-1"
-              onClick={() => setIsNavOpen(false)}
-            >
-              Inicio
-            </a>
-            <a
-              href="#como-funciona"
-              className="text-gray-700 hover:text-primary font-medium py-1"
-              onClick={() => setIsNavOpen(false)}
-            >
-              Cómo Funciona
-            </a>
-            <a
-              href="#beneficios"
-              className="text-gray-700 hover:text-primary font-medium py-1"
-              onClick={() => setIsNavOpen(false)}
-            >
-              Beneficios
-            </a>
-            <a
-              href="#precios"
-              className="text-gray-700 hover:text-primary font-medium py-1"
-              onClick={() => setIsNavOpen(false)}
-            >
-              Precios
-            </a>
-            <a
-              href="#testimonios"
-              className="text-gray-700 hover:text-primary font-medium py-1"
-              onClick={() => setIsNavOpen(false)}
-            >
-              Testimonios
-            </a>
-            <a
-              href="#faq"
-              className="text-gray-700 hover:text-primary font-medium py-1"
-              onClick={() => setIsNavOpen(false)}
-            >
-              FAQ
-            </a>
-            <div className="flex flex-col space-y-2 pt-2">
-              <Link to="/sign-in" onClick={() => setIsNavOpen(false)}>
+        <div className="hidden sm:ml-6 sm:flex sm:items-center">
+          {isLoggedIn ? (
+            <UserMenu />
+          ) : (
+            <>
+              <Link to="/signin">
                 <Button
                   variant="outline"
-                  className="border-primary text-primary hover:bg-primary hover:text-white w-full"
+                  className="border-primary text-primary hover:bg-primary hover:text-white"
                 >
                   Iniciar Sesión
                 </Button>
               </Link>
-              <Link to="/demo" onClick={() => setIsNavOpen(false)}>
-                <Button className="bg-primary hover:bg-primary/90 text-white w-full">
-                  Probar Demo
+              <Link to="/signup">
+                <Button className="bg-primary hover:bg-primary/90 text-white">
+                  Registrarse
                 </Button>
               </Link>
-            </div>
+            </>
+          )}
+        </div>
+
+        <div className="-mr-2 flex items-center sm:hidden">
+          <Button
+            variant="ghost"
+            onClick={toggleNav}
+            className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+          >
+            <span className="sr-only">Abrir menú principal</span>
+            {isNavOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
+          </Button>
+        </div>
+      </div>
+
+      {isNavOpen && (
+        <div className="sm:hidden">
+          <div className="pt-2 pb-3 space-y-1">
+            <Link
+              to="#como-funciona"
+              className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300"
+              onClick={() => setIsNavOpen(false)}
+            >
+              Cómo Funciona
+            </Link>
+            <Link
+              to="#beneficios"
+              className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300"
+              onClick={() => setIsNavOpen(false)}
+            >
+              Beneficios
+            </Link>
+            <Link
+              to="#precios"
+              className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300"
+              onClick={() => setIsNavOpen(false)}
+            >
+              Precios
+            </Link>
+            <Link
+              to="#testimonios"
+              className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300"
+              onClick={() => setIsNavOpen(false)}
+            >
+              Testimonios
+            </Link>
+            <Link
+              to="#faq"
+              className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300"
+              onClick={() => setIsNavOpen(false)}
+            >
+              FAQ
+            </Link>
+            {isLoggedIn && (
+              <div className="pl-3 pr-4 py-2">
+                <UserMenu />
+              </div>
+            )}
           </div>
         </div>
       )}

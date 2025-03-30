@@ -14,7 +14,7 @@ export const NavbarCustom = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <img
-            src="/lovable-uploads/a1901e70-a8ab-4165-a638-6abf701a5cf2.png"
+            src="/lovable-uploads/e4c386bd-ed04-430c-a72e-a585e0ffdb2b.png"
             alt="ProTalker Logo"
             className="h-10 w-10 mr-2 rounded-lg"
           />
