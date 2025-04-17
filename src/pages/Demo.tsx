@@ -1,4 +1,3 @@
-
 import { NavbarCustom } from "@/components/NavbarCustom";
 import { useAuth } from "@/context/AuthContext"; 
 import { useState, useEffect, useRef } from "react";
@@ -9,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Bot, User, Mic, Send, Play } from "lucide-react";
+import Interviewer from '../components/Interviewer';
 
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000"; // Update this as needed
@@ -18,6 +18,7 @@ export default function Demo() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [greeting, setGreeting] = useState("");
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   useEffect(() => {
     if (profile?.nombre) {
@@ -89,6 +90,7 @@ export default function Demo() {
   const runElevenLabsDemo = async () => {
     try {
       setIsProcessing(true);
+      setIsSpeaking(true);
       toast({
         title: "Iniciando ElevenLabs",
         description: "Preparando la demo de voz...",
@@ -137,6 +139,7 @@ export default function Demo() {
       });
     } finally {
       setIsProcessing(false);
+      setIsSpeaking(false);
     }
   };
   
@@ -200,6 +203,7 @@ export default function Demo() {
               </div>
               
               <TabsContent value="chat" className="flex-grow flex flex-col p-4">
+                <Interviewer isSpeaking={isSpeaking} />
                 <div 
                   ref={chatContainerRef}
                   className="flex-grow overflow-y-auto mb-4 space-y-4"
