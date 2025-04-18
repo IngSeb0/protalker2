@@ -13,13 +13,80 @@ import { Bot, User, Mic, Send, Play } from "lucide-react";
 const OPENAI_API_URL = "http://localhost:5000"; // Update this as needed
 const BASE_API_URL = "http://localhost:5000"; // Update this as needed
 
+interface Badge {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  achieved: boolean;
+  shareMessage: string;
+}
+
 export default function Demo() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [greeting, setGreeting] = useState("");
-  const [completedSessions, setCompletedSessions] = useState(3); // Sesiones completadas iniciales
-  const [badges, setBadges] = useState([]); // Insignias obtenidas
-  const [shareLink, setShareLink] = useState(""); // URL para compartir
+  const [completedSessions, setCompletedSessions] = useState(0);
+  const [shareLink, setShareLink] = useState("");
+  
+  const [badges, setBadges] = useState<Badge[]>([
+    {
+      id: "newbie",
+      title: "Principiante ProTalker",
+      description: "Completaste tu primera sesión de práctica",
+      image: "🎯",
+      achieved: false,
+      shareMessage: "¡Acabo de completar mi primera sesión en ProTalker! #ComunicaciónÉxito"
+    },
+    {
+      id: "5-sessions",
+      title: "Practicante Consistente",
+      description: "Completaste 5 sesiones de práctica",
+      image: "🏆",
+      achieved: false,
+      shareMessage: "¡He completado 5 sesiones en ProTalker! Mi comunicación mejora cada día. #HabilidadesEnCrecimiento"
+    },
+    {
+      id: "10-sessions",
+      title: "Maestro de la Comunicación",
+      description: "Completaste 10 sesiones de práctica",
+      image: "🌟",
+      achieved: false,
+      shareMessage: "¡Logré completar 10 sesiones en ProTalker! Dominando el arte de la comunicación. #ComunicaciónProfesional"
+    },
+    {
+      id: "fast-learner",
+      title: "Aprendiz Rápido",
+      description: "Completaste 3 sesiones en un día",
+      image: "⚡",
+      achieved: false,
+      shareMessage: "¡Completé 3 sesiones en un solo día con ProTalker! #AprendizajeAcelerado"
+    },
+    {
+      id: "week-challenge",
+      title: "Reto Semanal",
+      description: "Completaste una sesión cada día por una semana",
+      image: "📅",
+      achieved: false,
+      shareMessage: "¡Completé el Reto Semanal de ProTalker! 7 días mejorando mi comunicación. #Constancia"
+    },
+    {
+      id: "early-bird",
+      title: "Madrugador Comunicativo",
+      description: "Completaste una sesión antes de las 8 AM",
+      image: "🌅",
+      achieved: false,
+      shareMessage: "¡Practiqué mi comunicación temprano en la mañana con ProTalker! #EarlyBird"
+    },
+    {
+      id: "weekend-warrior",
+      title: "Guerrero de Fin de Semana",
+      description: "Completaste una sesión el sábado o domingo",
+      image: "🏝️",
+      achieved: false,
+      shareMessage: "¡Incluso los fines de semana practico con ProTalker! #AprendizajeContinuo"
+    }
+  ]);
 
   useEffect(() => {
     if (profile?.nombre) {
@@ -51,30 +118,81 @@ export default function Demo() {
     }
   }, [messages]);
 
-  // Función para incrementar las sesiones completadas
+  // Efecto para notificar cuando se gana una insignia
+  useEffect(() => {
+    const newlyAchieved = badges.filter(b => b.achieved && 
+      !badges.find(prevBadge => prevBadge.id === b.id && prevBadge.achieved));
+      
+    newlyAchieved.forEach(badge => {
+      toast({
+        title: `¡Nueva insignia desbloqueada! ${badge.image}`,
+        description: `${badge.title}: ${badge.description}`,
+        action: (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => shareBadge(badge)}
+          >
+            Compartir
+          </Button>
+        )
+      });
+    });
+  }, [badges]);
+
   const incrementSessions = () => {
     setCompletedSessions((prev) => {
-      const newSessionCount = prev + 1;
-
-      // Comprobar si se debe otorgar una nueva insignia
-      if (newSessionCount === 5 && !badges.includes("5 sessions")) {
-        setBadges((prevBadges) => [...prevBadges, "5 sessions"]);
-      } else if (newSessionCount === 10 && !badges.includes("10 sessions")) {
-        setBadges((prevBadges) => [...prevBadges, "10 sessions"]);
-      }
-
-      return newSessionCount;
+      const newCount = prev + 1;
+      
+      // Actualizar insignias basado en el nuevo conteo
+      setBadges(prevBadges => prevBadges.map(badge => {
+        if (badge.id === "newbie" && newCount >= 1) {
+          return {...badge, achieved: true};
+        }
+        if (badge.id === "5-sessions" && newCount >= 5) {
+          return {...badge, achieved: true};
+        }
+        if (badge.id === "10-sessions" && newCount >= 10) {
+          return {...badge, achieved: true};
+        }
+        return badge;
+      }));
+      
+      return newCount;
     });
   };
 
-  // Función para generar el link para compartir el rendimiento
   const generateShareLink = () => {
-    const sessionProgress = `Sesiones completadas: ${completedSessions}/10`;
-    const badgeProgress = badges.length > 0 ? `Insignias obtenidas: ${badges.join(", ")}` : "Sin insignias aún";
-    const link = `${window.location.origin}/progreso?sesiones=${completedSessions}&insignias=${encodeURIComponent(badges.join(", "))}`;
+    const achievedBadges = badges.filter(b => b.achieved);
+    const badgeList = achievedBadges.map(b => b.title).join(", ");
+    
+    const message = `¡He completado ${completedSessions} sesiones en ProTalker! ` +
+      `Insignias obtenidas: ${badgeList || "Todavía estoy comenzando"}. ` +
+      `Únete a mí en este viaje para mejorar nuestras habilidades de comunicación.`;
+    
+    const link = `${window.location.origin}/progreso?sesiones=${completedSessions}&insignias=${encodeURIComponent(badgeList)}`;
+    
     setShareLink(link);
-    console.log(link); // Puedes usar este link para compartir el progreso
     return link;
+  };
+
+  const shareBadge = (badge: Badge) => {
+    const message = `${badge.shareMessage} ${generateShareLink()}`;
+    if (navigator.share) {
+      navigator.share({
+        title: badge.title,
+        text: message,
+        url: generateShareLink()
+      }).catch(console.error);
+    } else {
+      // Fallback para navegadores que no soportan la API de share
+      navigator.clipboard.writeText(message).then(() => {
+        toast({
+          title: "¡Enlace copiado!",
+          description: "Pega el enlace para compartir tu logro"
+        });
+      });
+    }
   };
 
   const handleSendMessage = async () => {
@@ -136,8 +254,8 @@ export default function Demo() {
           { type: "bot", content: "Demo de ElevenLabs iniciado. ¡Ahora puedes interactuar con el asistente por voz!" },
           { type: "bot", content: `Output: ${data.output}` },
         ]);
-        incrementSessions(); // Incrementa las sesiones cuando la demo inicia
-        generateShareLink(); // Genera el link para compartir el progreso
+        incrementSessions();
+        generateShareLink();
         toast({
           title: "Demo iniciado",
           description: "Demo de ElevenLabs iniciado correctamente",
@@ -382,10 +500,31 @@ export default function Demo() {
                 </div>
                 
                 <div className="pt-2">
-                  <p className="text-sm text-muted-foreground mb-2">Últimos logros:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {badges.map((badge, index) => (
-                      <span key={index} className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">{badge}</span>
+                  <p className="text-sm text-muted-foreground mb-2">Tus insignias:</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    {badges.filter(b => b.achieved).map((badge) => (
+                      <div 
+                        key={badge.id}
+                        className="flex flex-col items-center p-3 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg cursor-pointer hover:shadow-md transition-all"
+                        onClick={() => shareBadge(badge)}
+                        title="Haz clic para compartir"
+                      >
+                        <span className="text-2xl mb-1">{badge.image}</span>
+                        <span className="text-xs font-medium text-center">{badge.title}</span>
+                        <span className="text-xs text-muted-foreground text-center">{badge.description}</span>
+                      </div>
+                    ))}
+                    
+                    {/* Insignias no obtenidas aún */}
+                    {badges.filter(b => !b.achieved).map((badge) => (
+                      <div 
+                        key={badge.id}
+                        className="flex flex-col items-center p-3 bg-gray-100 rounded-lg opacity-50"
+                      >
+                        <span className="text-2xl mb-1">🔒</span>
+                        <span className="text-xs font-medium text-center">{badge.title}</span>
+                        <span className="text-xs text-muted-foreground text-center">{badge.description}</span>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -407,8 +546,16 @@ export default function Demo() {
               </Button>
               <div className="mt-4">
                 {shareLink && (
-                  <a href={shareLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                    Compartir progreso
+                  <a 
+                    href={shareLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-blue-600 hover:text-blue-800 text-sm flex items-center"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    Compartir mi progreso
                   </a>
                 )}
               </div>
