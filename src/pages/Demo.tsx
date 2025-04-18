@@ -1,4 +1,3 @@
-
 import { NavbarCustom } from "@/components/NavbarCustom";
 import { useAuth } from "@/context/AuthContext"; 
 import { useState, useEffect, useRef } from "react";
@@ -18,6 +17,8 @@ export default function Demo() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [greeting, setGreeting] = useState("");
+  const [completedSessions, setCompletedSessions] = useState(3); // Sesiones completadas iniciales
+  const [badges, setBadges] = useState([]); // Insignias obtenidas
 
   useEffect(() => {
     if (profile?.nombre) {
@@ -36,6 +37,7 @@ export default function Demo() {
   const [isProcessing, setIsProcessing] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!loading && !user) {
       navigate('/signin');
@@ -47,7 +49,23 @@ export default function Demo() {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
-  
+
+  // Función para incrementar las sesiones completadas
+  const incrementSessions = () => {
+    setCompletedSessions((prev) => {
+      const newSessionCount = prev + 1;
+
+      // Comprobar si se debe otorgar una nueva insignia
+      if (newSessionCount === 5 && !badges.includes("5 sessions")) {
+        setBadges((prevBadges) => [...prevBadges, "5 sessions"]);
+      } else if (newSessionCount === 10 && !badges.includes("10 sessions")) {
+        setBadges((prevBadges) => [...prevBadges, "10 sessions"]);
+      }
+
+      return newSessionCount;
+    });
+  };
+
   const handleSendMessage = async () => {
     if (!message.trim()) return;
     
@@ -84,7 +102,7 @@ export default function Demo() {
       setMessage('');
     }
   };
-  
+
   const runElevenLabsDemo = async () => {
     try {
       setIsProcessing(true);
@@ -107,6 +125,7 @@ export default function Demo() {
           { type: "bot", content: "Demo de ElevenLabs iniciado. ¡Ahora puedes interactuar con el asistente por voz!" },
           { type: "bot", content: `Output: ${data.output}` },
         ]);
+        incrementSessions(); // Incrementa las sesiones cuando la demo inicia
         toast({
           title: "Demo iniciado",
           description: "Demo de ElevenLabs iniciado correctamente",
@@ -138,7 +157,7 @@ export default function Demo() {
       setIsProcessing(false);
     }
   };
-  
+
   const toggleListening = () => {
     setIsListening(!isListening);
     
@@ -149,12 +168,12 @@ export default function Demo() {
       }, 3000);
     }
   };
-  
+
   const handleLogout = async () => {
     await signOut();
     navigate('/');
   };
-  
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -209,11 +228,7 @@ export default function Demo() {
                       className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       <div 
-                        className={`max-w-[80%] rounded-lg p-3 ${
-                          msg.type === 'user' 
-                            ? 'bg-primary text-primary-foreground' 
-                            : 'bg-muted'
-                        }`}
+                        className={`max-w-[80%] rounded-lg p-3 ${msg.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
                       >
                         <div className="flex items-center mb-1">
                           {msg.type === 'bot' ? <Bot size={14} className="mr-1" /> : <User size={14} className="mr-1" />}
@@ -347,18 +362,19 @@ export default function Demo() {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span>Sesiones completadas</span>
-                    <span className="font-medium">3/10</span>
+                    <span className="font-medium">{completedSessions}/10</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-primary h-2 rounded-full" style={{ width: '30%' }}></div>
+                    <div className="bg-primary h-2 rounded-full" style={{ width: `${(completedSessions / 10) * 100}%` }}></div>
                   </div>
                 </div>
                 
                 <div className="pt-2">
                   <p className="text-sm text-muted-foreground mb-2">Últimos logros:</p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Respuestas claras</span>
-                    <span className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">Buen ritmo</span>
+                    {badges.map((badge, index) => (
+                      <span key={index} className="bg-primary/10 text-primary text-xs py-1 px-2 rounded-full">{badge}</span>
+                    ))}
                   </div>
                 </div>
               </div>
