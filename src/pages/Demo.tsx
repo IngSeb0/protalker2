@@ -19,6 +19,7 @@ export default function Demo() {
   const [greeting, setGreeting] = useState("");
   const [completedSessions, setCompletedSessions] = useState(3); // Sesiones completadas iniciales
   const [badges, setBadges] = useState([]); // Insignias obtenidas
+  const [shareLink, setShareLink] = useState(""); // URL para compartir
 
   useEffect(() => {
     if (profile?.nombre) {
@@ -64,6 +65,16 @@ export default function Demo() {
 
       return newSessionCount;
     });
+  };
+
+  // Función para generar el link para compartir el rendimiento
+  const generateShareLink = () => {
+    const sessionProgress = `Sesiones completadas: ${completedSessions}/10`;
+    const badgeProgress = badges.length > 0 ? `Insignias obtenidas: ${badges.join(", ")}` : "Sin insignias aún";
+    const link = `${window.location.origin}/progreso?sesiones=${completedSessions}&insignias=${encodeURIComponent(badges.join(", "))}`;
+    setShareLink(link);
+    console.log(link); // Puedes usar este link para compartir el progreso
+    return link;
   };
 
   const handleSendMessage = async () => {
@@ -126,6 +137,7 @@ export default function Demo() {
           { type: "bot", content: `Output: ${data.output}` },
         ]);
         incrementSessions(); // Incrementa las sesiones cuando la demo inicia
+        generateShareLink(); // Genera el link para compartir el progreso
         toast({
           title: "Demo iniciado",
           description: "Demo de ElevenLabs iniciado correctamente",
@@ -393,6 +405,13 @@ export default function Demo() {
                 <Play className="mr-2 h-4 w-4" />
                 Iniciar demo de voz
               </Button>
+              <div className="mt-4">
+                {shareLink && (
+                  <a href={shareLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                    Compartir progreso
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>
