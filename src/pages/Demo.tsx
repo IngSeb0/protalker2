@@ -140,16 +140,41 @@ export default function Demo() {
     });
   }, [badges]);
 
- 
+  // Función optimizada para incrementar sesiones
+  const incrementSessions = () => {
+    setCompletedSessions(prev => {
+      const newCount = prev + 1;
+      
+      // Actualizar insignias basado en el nuevo valor
+      setBadges(currentBadges => currentBadges.map(badge => ({
+        ...badge,
+        achieved: badge.achieved || 
+                 (badge.id === "newbie" && newCount >= 1) ||
+                 (badge.id === "5-sessions" && newCount >= 5) ||
+                 (badge.id === "10-sessions" && newCount >= 10)
+      })));
+      
+      return newCount;
+    });
+  };
 
+  // Efecto para actualizar el enlace compartible cuando cambian las sesiones o insignias
+  useEffect(() => {
+    const achievedBadges = badges.filter(b => b.achieved);
+    const badgeList = achievedBadges.map(b => b.title).join(", ");
+    
+    const link = `${window.location.origin}/progreso?sesiones=${completedSessions}&insignias=${encodeURIComponent(badgeList)}`;
+    
+    setShareLink(link);
+  }, [completedSessions, badges]);
 
   const shareBadge = (badge: Badge) => {
-    const message = `${badge.shareMessage} ${generateShareLink()}`;
+    const message = `${badge.shareMessage} ${shareLink || generateShareLink()}`;
     if (navigator.share) {
       navigator.share({
         title: badge.title,
         text: message,
-        url: generateShareLink()
+        url: shareLink || generateShareLink()
       }).catch(console.error);
     } else {
       // Fallback para navegadores que no soportan la API de share
@@ -160,6 +185,17 @@ export default function Demo() {
         });
       });
     }
+  };
+
+  // Función para generar el enlace (ahora usa el estado actual)
+  const generateShareLink = () => {
+    const achievedBadges = badges.filter(b => b.achieved);
+    const badgeList = achievedBadges.map(b => b.title).join(", ");
+    
+    const link = `${window.location.origin}/progreso?sesiones=${completedSessions}&insignias=${encodeURIComponent(badgeList)}`;
+    
+    setShareLink(link);
+    return link;
   };
 
   const handleSendMessage = async () => {
@@ -199,76 +235,53 @@ export default function Demo() {
     }
   };
 
-const runElevenLabsDemo = async () => {
-  try {
-    setIsProcessing(true);
-    toast({
-      title: "Iniciando ElevenLabs",
-      description: "Preparando la demo de voz...",
-    });
-
-    const response = await fetch(`${BASE_API_URL}/api/run-prueba`, {
-      method: "POST",
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setMessages((prev) => [
-        ...prev,
-        { type: "bot", content: "Demo de ElevenLabs iniciado. ¡Ahora puedes interactuar con el asistente por voz!" },
-        { type: "bot", content: `Output: ${data.output}` },
-      ]);
-      
-      // Actualizamos el estado de forma correcta
-      const newSessionCount = completedSessions + 1;
-      setCompletedSessions(newSessionCount);
-      
-      // Actualizamos las insignias basándonos en el nuevo valor
-      setBadges(prevBadges => prevBadges.map(badge => {
-        if (badge.id === "newbie" && newSessionCount >= 1) {
-          return {...badge, achieved: true};
-        }
-        if (badge.id === "5-sessions" && newSessionCount >= 5) {
-          return {...badge, achieved: true};
-        }
-        if (badge.id === "10-sessions" && newSessionCount >= 10) {
-          return {...badge, achieved: true};
-        }
-        return badge;
-      }));
-      
-      // Generamos el enlace con el nuevo valor
-      generateShareLink(newSessionCount);
-
+  const runElevenLabsDemo = async () => {
+    try {
+      setIsProcessing(true);
       toast({
-        title: "Demo iniciado",
-        description: "Demo de ElevenLabs iniciado correctamente",
+        title: "Iniciando ElevenLabs",
+        description: "Preparando la demo de voz...",
       });
-    } else {
-      // Manejo de errores...
-    }
-  } catch (error) {
-    // Manejo de errores...
-  } finally {
-    setIsProcessing(false);
-  }
-};
 
-// Modificamos generateShareLink para que pueda recibir el valor directamente
-const generateShareLink = (sessionCount = completedSessions) => {
-  const achievedBadges = badges.filter(b => b.achieved);
-  const badgeList = achievedBadges.map(b => b.title).join(", ");
-  
-  const message = `¡He completado ${sessionCount} sesiones en ProTalker! ` +
-    `Insignias obtenidas: ${badgeList || "Todavía estoy comenzando"}. ` +
-    `Únete a mí en este viaje para mejorar nuestras habilidades de comunicación.`;
-  
-  const link = `${window.location.origin}/progreso?sesiones=${sessionCount}&insignias=${encodeURIComponent(badgeList)}`;
-  
-  setShareLink(link);
-  return link;
-};
+      const response = await fetch(`${BASE_API_URL}/api/run-prueba`, {
+        method: "POST",
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessages((prev) => [
+          ...prev,
+          { type: "bot", content: "Demo de ElevenLabs iniciado. ¡Ahora puedes interactuar con el asistente por voz!" },
+          { type: "bot", content: `Output: ${data.output}` },
+        ]);
+        
+        // Incrementar sesiones - esta es la línea clave que hace funcionar el contador
+        incrementSessions();
+        
+        toast({
+          title: "Demo iniciado",
+          description: "Demo de ElevenLabs iniciado correctamente",
+        });
+      } else {
+        console.error("Error from backend:", data.error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Error al iniciar el demo de ElevenLabs"
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error inesperado"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const toggleListening = () => {
     setIsListening(!isListening);
