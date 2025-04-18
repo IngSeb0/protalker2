@@ -36,7 +36,6 @@ export default function Demo() {
   const [isProcessing, setIsProcessing] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  
   useEffect(() => {
     if (!loading && !user) {
       navigate('/signin');
