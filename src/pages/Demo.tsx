@@ -340,7 +340,7 @@ export default function Demo() {
                 {greeting}
               </CardTitle>
               <CardDescription>
-                Aquí podrás probar las funcionalidades de ProTalker.
+                Aquí podrás probar las funcionalidades de ProTalker, cambios hechos.
               </CardDescription>
             </CardHeader>
           </Card>
