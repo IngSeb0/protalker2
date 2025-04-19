@@ -10,8 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Bot, User, Mic, Send, Play } from "lucide-react";
 
 // Define API URL constants
-const OPENAI_API_URL = "http://localhost:5000"; // Update this as needed
-const BASE_API_URL = "http://localhost:5000"; // Update this as needed
+const OPENAI_API_URL = "http://localhost:5000";
+const BASE_API_URL = "http://localhost:5000";
 
 interface Badge {
   id: string;
@@ -26,67 +26,85 @@ export default function Demo() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [greeting, setGreeting] = useState("");
-  const [completedSessions, setCompletedSessions] = useState(0);
+  const [completedSessions, setCompletedSessions] = useState(() => {
+    // Cargar desde localStorage si existe
+    const saved = localStorage.getItem('completedSessions');
+    return saved ? parseInt(saved) : 0;
+  });
   const [shareLink, setShareLink] = useState("");
   
-  const [badges, setBadges] = useState<Badge[]>([
-    {
-      id: "newbie",
-      title: "Principiante ProTalker",
-      description: "Completaste tu primera sesión de práctica",
-      image: "🎯",
-      achieved: false,
-      shareMessage: "¡Acabo de completar mi primera sesión en ProTalker! #ComunicaciónÉxito"
-    },
-    {
-      id: "5-sessions",
-      title: "Practicante Consistente",
-      description: "Completaste 5 sesiones de práctica",
-      image: "🏆",
-      achieved: false,
-      shareMessage: "¡He completado 5 sesiones en ProTalker! Mi comunicación mejora cada día. #HabilidadesEnCrecimiento"
-    },
-    {
-      id: "10-sessions",
-      title: "Maestro de la Comunicación",
-      description: "Completaste 10 sesiones de práctica",
-      image: "🌟",
-      achieved: false,
-      shareMessage: "¡Logré completar 10 sesiones en ProTalker! Dominando el arte de la comunicación. #ComunicaciónProfesional"
-    },
-    {
-      id: "fast-learner",
-      title: "Aprendiz Rápido",
-      description: "Completaste 3 sesiones en un día",
-      image: "⚡",
-      achieved: false,
-      shareMessage: "¡Completé 3 sesiones en un solo día con ProTalker! #AprendizajeAcelerado"
-    },
-    {
-      id: "week-challenge",
-      title: "Reto Semanal",
-      description: "Completaste una sesión cada día por una semana",
-      image: "📅",
-      achieved: false,
-      shareMessage: "¡Completé el Reto Semanal de ProTalker! 7 días mejorando mi comunicación. #Constancia"
-    },
-    {
-      id: "early-bird",
-      title: "Madrugador Comunicativo",
-      description: "Completaste una sesión antes de las 8 AM",
-      image: "🌅",
-      achieved: false,
-      shareMessage: "¡Practiqué mi comunicación temprano en la mañana con ProTalker! #EarlyBird"
-    },
-    {
-      id: "weekend-warrior",
-      title: "Guerrero de Fin de Semana",
-      description: "Completaste una sesión el sábado o domingo",
-      image: "🏝️",
-      achieved: false,
-      shareMessage: "¡Incluso los fines de semana practico con ProTalker! #AprendizajeContinuo"
-    }
-  ]);
+  const [badges, setBadges] = useState<Badge[]>(() => {
+    const initialBadges = [
+      {
+        id: "newbie",
+        title: "Principiante ProTalker",
+        description: "Completaste tu primera sesión de práctica",
+        image: "🎯",
+        achieved: false,
+        shareMessage: "¡Acabo de completar mi primera sesión en ProTalker! #ComunicaciónÉxito"
+      },
+      {
+        id: "5-sessions",
+        title: "Practicante Consistente",
+        description: "Completaste 5 sesiones de práctica",
+        image: "🏆",
+        achieved: false,
+        shareMessage: "¡He completado 5 sesiones en ProTalker! Mi comunicación mejora cada día. #HabilidadesEnCrecimiento"
+      },
+      {
+        id: "10-sessions",
+        title: "Maestro de la Comunicación",
+        description: "Completaste 10 sesiones de práctica",
+        image: "🌟",
+        achieved: false,
+        shareMessage: "¡Logré completar 10 sesiones en ProTalker! Dominando el arte de la comunicación. #ComunicaciónProfesional"
+      },
+      {
+        id: "fast-learner",
+        title: "Aprendiz Rápido",
+        description: "Completaste 3 sesiones en un día",
+        image: "⚡",
+        achieved: false,
+        shareMessage: "¡Completé 3 sesiones en un solo día con ProTalker! #AprendizajeAcelerado"
+      },
+      {
+        id: "week-challenge",
+        title: "Reto Semanal",
+        description: "Completaste una sesión cada día por una semana",
+        image: "📅",
+        achieved: false,
+        shareMessage: "¡Completé el Reto Semanal de ProTalker! 7 días mejorando mi comunicación. #Constancia"
+      },
+      {
+        id: "early-bird",
+        title: "Madrugador Comunicativo",
+        description: "Completaste una sesión antes de las 8 AM",
+        image: "🌅",
+        achieved: false,
+        shareMessage: "¡Practiqué mi comunicación temprano en la mañana con ProTalker! #EarlyBird"
+      },
+      {
+        id: "weekend-warrior",
+        title: "Guerrero de Fin de Semana",
+        description: "Completaste una sesión el sábado o domingo",
+        image: "🏝️",
+        achieved: false,
+        shareMessage: "¡Incluso los fines de semana practico con ProTalker! #AprendizajeContinuo"
+      }
+    ];
+
+    // Verificar insignias desbloqueadas basadas en sesiones guardadas
+    const savedSessions = localStorage.getItem('completedSessions');
+    const sessionCount = savedSessions ? parseInt(savedSessions) : 0;
+    
+    return initialBadges.map(badge => ({
+      ...badge,
+      achieved: badge.achieved || 
+               (badge.id === "newbie" && sessionCount >= 1) ||
+               (badge.id === "5-sessions" && sessionCount >= 5) ||
+               (badge.id === "10-sessions" && sessionCount >= 10)
+    }));
+  });
 
   useEffect(() => {
     if (profile?.nombre) {
@@ -144,28 +162,36 @@ export default function Demo() {
   const incrementSessions = () => {
     setCompletedSessions(prev => {
       const newCount = prev + 1;
+      localStorage.setItem('completedSessions', newCount.toString());
       
-      // Actualizar insignias basado en el nuevo valor
-      setBadges(currentBadges => currentBadges.map(badge => ({
-        ...badge,
-        achieved: badge.achieved || 
-                 (badge.id === "newbie" && newCount >= 1) ||
-                 (badge.id === "5-sessions" && newCount >= 5) ||
-                 (badge.id === "10-sessions" && newCount >= 10)
-      })));
+      setBadges(currentBadges => 
+        currentBadges.map(badge => ({
+          ...badge,
+          achieved: badge.achieved || 
+                   (badge.id === "newbie" && newCount >= 1) ||
+                   (badge.id === "5-sessions" && newCount >= 5) ||
+                   (badge.id === "10-sessions" && newCount >= 10)
+        }))
+      );
       
       return newCount;
     });
   };
 
-  // Efecto para actualizar el enlace compartible cuando cambian las sesiones o insignias
-  useEffect(() => {
+  // Función para generar el enlace
+  const generateShareLink = () => {
     const achievedBadges = badges.filter(b => b.achieved);
     const badgeList = achievedBadges.map(b => b.title).join(", ");
     
-    const link = `${window.location.origin}/progreso?sesiones=${completedSessions}&insignias=${encodeURIComponent(badgeList)}`;
+    const link = `${window.location.origin}/share-progress?sesiones=${completedSessions}&insignias=${encodeURIComponent(badgeList)}`;
     
     setShareLink(link);
+    return link;
+  };
+
+  // Actualizar el enlace cuando cambian las sesiones o insignias
+  useEffect(() => {
+    generateShareLink();
   }, [completedSessions, badges]);
 
   const shareBadge = (badge: Badge) => {
@@ -177,7 +203,6 @@ export default function Demo() {
         url: shareLink || generateShareLink()
       }).catch(console.error);
     } else {
-      // Fallback para navegadores que no soportan la API de share
       navigator.clipboard.writeText(message).then(() => {
         toast({
           title: "¡Enlace copiado!",
@@ -185,17 +210,6 @@ export default function Demo() {
         });
       });
     }
-  };
-
-  // Función para generar el enlace (ahora usa el estado actual)
-  const generateShareLink = () => {
-    const achievedBadges = badges.filter(b => b.achieved);
-    const badgeList = achievedBadges.map(b => b.title).join(", ");
-    
-    const link = `${window.location.origin}/progreso?sesiones=${completedSessions}&insignias=${encodeURIComponent(badgeList)}`;
-    
-    setShareLink(link);
-    return link;
   };
 
   const handleSendMessage = async () => {
@@ -256,7 +270,6 @@ export default function Demo() {
           { type: "bot", content: `Output: ${data.output}` },
         ]);
         
-        // Incrementar sesiones - esta es la línea clave que hace funcionar el contador
         incrementSessions();
         
         toast({
@@ -490,7 +503,7 @@ export default function Demo() {
                     <span className="font-medium">{completedSessions}/10</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-primary h-2 rounded-full" style={{ width: `${(completedSessions / 10) * 100}%` }}></div>
+                    <div className="bg-primary h-2 rounded-full" style={{ width: `${Math.min(100, (completedSessions / 10) * 100)}%` }}></div>
                   </div>
                 </div>
                 
@@ -510,7 +523,6 @@ export default function Demo() {
                       </div>
                     ))}
                     
-                    {/* Insignias no obtenidas aún */}
                     {badges.filter(b => !b.achieved).map((badge) => (
                       <div 
                         key={badge.id}

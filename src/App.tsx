@@ -7,6 +7,7 @@ import Demo from "./pages/Demo";
 import SignIn from "./pages/SignIn";
 import ResetPassword from "./pages/ResetPassword";
 import UpdatePassword from "./pages/UpdatePassword";
+import ShareProgressPage from "./pages/ShareProgress";
 import Profile from "./pages/Profile";
 import { AuthProvider } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/signin" element={<SignIn />} />
+<Route path="/share-progress" element={<ShareProgressPage />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/update-password" element={<UpdatePassword />} />
           <Route 
