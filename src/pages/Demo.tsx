@@ -14,7 +14,10 @@ import { useConversation } from '@11labs/react';
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
 const BASE_API_URL = "http://localhost:5000";
-
+const [mouthShape, setMouthShape] = useState("rest");
+const audioContextRef = useRef<AudioContext | null>(null);
+const analyserRef = useRef<AnalyserNode | null>(null);
+  
 interface Badge {
   id: string;
   title: string;
@@ -251,7 +254,34 @@ export default function Demo() {
     }
   };
 
-  const conversation = useConversation({
+ // Capturar el flujo de audio generado por ElevenLabs
+const conversation = useConversation({
+  onAudioPlayback: (audioStream: MediaStream) => {
+    // Analizar el flujo de audio con Web Audio API
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext();
+    }
+
+    const source = audioContextRef.current.createMediaStreamSource(audioStream);
+    analyserRef.current = audioContextRef.current.createAnalyser();
+    source.connect(analyserRef.current);
+
+    // Analizar las frecuencias del audio en tiempo real
+    const updateMouthShape = () => {
+      if (!analyserRef.current) return;
+
+      const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+      analyserRef.current.getByteFrequencyData(dataArray);
+
+      // Usar la media de las frecuencias para decidir la forma de la boca
+      const avgFrequency = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+      setMouthShape(avgFrequency > 150 ? "open" : "rest");
+
+      requestAnimationFrame(updateMouthShape);
+    };
+
+    updateMouthShape();
+  },
     onConnect: () => {
       toast({
         title: "🎙️ Conectado",
@@ -274,6 +304,13 @@ export default function Demo() {
       });
     },
   });
+  const Avatar = ({ shape }: { shape: string }) => {
+    return (
+      <div className="avatar-container">
+        <img src={`/mouths/${shape}.png`} alt="mouth" className="mouth-animation" />
+      </div>
+    );
+  };
   
   const startVoiceDemo = async () => {
     try {
