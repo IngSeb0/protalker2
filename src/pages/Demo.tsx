@@ -349,7 +349,7 @@ export default function Demo() {
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Demo de entrenamiento</h1>
           <p className="text-muted-foreground">
-            Interactúa con nuestro asistente para practicar tus habilidades de comunicación
+            Interactúa con nuestro asistente para practicar tus habilidades de comunicación, NUEVOS CAMBIOS
           </p>
         </div>
         
