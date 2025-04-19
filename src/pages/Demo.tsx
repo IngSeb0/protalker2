@@ -280,7 +280,7 @@ export default function Demo() {
       await navigator.mediaDevices.getUserMedia({ audio: true });
   
       await conversation.startSession({
-        agentId: 'P1ORnc1dGjU8sp1tdcOu', // <-- tu real agentId aquí
+        agentId: 'P1ORnc1dGjU8sp1tdcOu',
       });
   
       setMessages(prev => [
