@@ -3,8 +3,8 @@ from elevenlabs.client import ElevenLabs
 from elevenlabs.conversational_ai.conversation import Conversation
 from elevenlabs.conversational_ai.default_audio_interface import DefaultAudioInterface
 
-agent_id = os.getenv("AGENT_ID", "urZyYi4Mwnf9bzfOCYve")
-api_key = os.getenv("ELEVENLABS_API_KEY", "sk_f4d3ccd978451351ffbce773eba879dd91f33bd0e87d5108")
+agent_id = os.getenv("AGENT_ID", "P1ORnc1dGjU8sp1tdcOu")
+api_key = os.getenv("ELEVENLABS_API_KEY", "sk_386b88ea0d3f5a179966d43d402707446e97ad8f2b9449e1")
 
 client = ElevenLabs(api_key=api_key)
 
