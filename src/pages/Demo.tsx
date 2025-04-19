@@ -8,6 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Bot, User, Mic, Send, Play } from "lucide-react";
+import { useConversation } from '@11labs/react';
+
 
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
@@ -249,52 +251,58 @@ export default function Demo() {
     }
   };
 
-  const runElevenLabsDemo = async () => {
-    try {
-      setIsProcessing(true);
+  const conversation = useConversation({
+    onConnect: () => {
       toast({
-        title: "Iniciando ElevenLabs",
-        description: "Preparando la demo de voz...",
+        title: "🎙️ Conectado",
+        description: "Puedes comenzar a hablar con el agente",
       });
-
-      const response = await fetch(`${BASE_API_URL}/api/run-prueba`, {
-        method: "POST",
+    },
+    onDisconnect: () => {
+      toast({
+        title: "🔴 Conversación terminada",
+        description: "El agente ya no está activo",
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessages((prev) => [
-          ...prev,
-          { type: "bot", content: "Demo de ElevenLabs iniciado. ¡Ahora puedes interactuar con el asistente por voz!" },
-          { type: "bot", content: `Output: ${data.output}` },
-        ]);
-        
-        incrementSessions();
-        
-        toast({
-          title: "Demo iniciado",
-          description: "Demo de ElevenLabs iniciado correctamente",
-        });
-      } else {
-        console.error("Error from backend:", data.error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Error al iniciar el demo de ElevenLabs"
-        });
-      }
-    } catch (error) {
-      console.error("Error:", error);
+    },
+ 
+    onError: (error) => {
+      console.error("Error con ElevenLabs:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Ocurrió un error inesperado"
+        description: "Ocurrió un error en la conversación de voz",
       });
-    } finally {
-      setIsProcessing(false);
+    },
+  });
+  
+  const startVoiceDemo = async () => {
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+  
+      await conversation.startSession({
+        agentId: 'P1ORnc1dGjU8sp1tdcOu', // <-- tu real agentId aquí
+      });
+  
+      setMessages(prev => [
+        ...prev,
+        { type: "bot", content: "Sesión de voz iniciada con ElevenLabs. ¡Puedes hablar ahora!" }
+      ]);
+  
+      incrementSessions();
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo iniciar la demo de voz",
+      });
     }
   };
+  
+  const stopVoiceDemo = async () => {
+    await conversation.endSession();
+  };
+  
 
   const toggleListening = () => {
     setIsListening(!isListening);
@@ -544,13 +552,29 @@ export default function Demo() {
                 Inicia el demo para interactuar con el asistente utilizando voz (powered by ElevenLabs)
               </p>
               <Button 
-                onClick={runElevenLabsDemo} 
-                className="w-full flex items-center justify-center"
-                disabled={isProcessing}
-              >
+  onClick={startVoiceDemo} 
+  className="w-full flex items-center justify-center"
+  disabled={conversation.status === 'connected'}
+>
+  <Play className="mr-2 h-4 w-4" />
+  Iniciar demo de voz
+</Button>
+
+<Button 
+  onClick={stopVoiceDemo}
+  className="w-full flex items-center justify-center mt-2 bg-red-600 text-white hover:bg-red-700"
+  disabled={conversation.status !== 'connected'}
+>
+  Detener demo de voz
+</Button>
+
+<div className="text-xs text-muted-foreground mt-2 text-center">
+  Estado: <strong>{conversation.status}</strong> — Agente está: <strong>{conversation.isSpeaking ? 'Hablando' : 'Escuchando'}</strong>
+</div>
+                    
                 <Play className="mr-2 h-4 w-4" />
                 Iniciar demo de voz
-              </Button>
+             
               <div className="mt-4">
                 {shareLink && (
                   <a 
