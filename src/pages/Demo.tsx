@@ -530,40 +530,10 @@ const conversation = useConversation({
   ))}
 </div>
                 
-                <div className="flex gap-2">
-                  <Button 
-                    size="icon" 
-                    variant={isListening ? "destructive" : "secondary"}
-                    onClick={toggleListening}
-                    className="flex-shrink-0"
-                    disabled={isProcessing}
-                  >
-                    <Mic size={18} />
-                  </Button>
+            
                   
-                  <Textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Escribe tu mensaje..."
-                    className="resize-none min-h-[2.5rem]"
-                    disabled={isProcessing}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSendMessage();
-                      }
-                    }}
-                  />
-                  
-                  <Button 
-                    size="icon" 
-                    onClick={handleSendMessage}
-                    disabled={!message.trim() || isProcessing}
-                    className="flex-shrink-0"
-                  >
-                    <Send size={18} />
-                  </Button>
-                </div>
+                 
+                
               </TabsContent>
               
               <TabsContent value="feedback" className="p-4">
