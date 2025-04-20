@@ -277,7 +277,7 @@ const conversation = useConversation({
 
       // Usar la media de las frecuencias para decidir la forma de la boca
       const avgFrequency = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-      setMouthShape(avgFrequency > 150 ? "open" : "rest");
+      setMouthShape(avgFrequency > 20 ? "open" : "rest");
 
       requestAnimationFrame(updateMouthShape);
     };
