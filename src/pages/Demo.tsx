@@ -223,7 +223,35 @@ newlyAchieved.forEach(badge => {
       });
     }
   };
-
+  //Compartir el progreso actual.
+  const shareProgress = () => {
+    const achievedBadges = badges.filter(b => b.achieved);
+    const message = `¡He completado ${completedSessions} sesiones en ProTalker y gané ${achievedBadges.length} insignias! 🎉\n\nÚnete a la mejor plataforma de práctica de entrevistas: ${generateShareLink()}`;
+  
+    if (navigator.share) {
+      navigator.share({
+        title: "Mi progreso en ProTalker",
+        text: message,
+        url: generateShareLink()
+      }).catch(console.error);
+    } else {
+      navigator.clipboard.writeText(message).then(() => {
+        toast({
+          title: "¡Progreso copiado!",
+          description: "Pega para compartir tus logros",
+          action: (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => window.open(generateShareLink(), '_blank')}
+            >
+              Ver demo
+            </Button>
+          )
+        });
+      });
+    }
+  };
   const handleSendMessage = async () => {
     if (!message.trim()) return;
     
@@ -641,36 +669,37 @@ const conversation = useConversation({
                 <Play className="mr-2 h-4 w-4" />
                 Iniciar demo de voz
              
-              <div className="mt-4">
-              {shareLink && (
-  <a 
+                <div className="mt-4 flex flex-col gap-2">
+  <Button 
+    variant="outline" 
+    onClick={shareProgress}
+    className="flex items-center justify-center gap-2"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+    </svg>
+    Compartir mi progreso
+  </Button>
+
+  <Button 
+    variant="link" 
     onClick={() => {
-      const message = `¡Estoy mejorando mis habilidades de comunicación con ProTalker! Prueba la demo del mejor simulador de entrevistas en tiempo real: ${generateShareLink()}`;
+      const message = `¡Estoy mejorando mis habilidades con ProTalker! Prueba la demo: ${generateShareLink()}`;
       navigator.clipboard.writeText(message).then(() => {
         toast({
-          title: "¡Mensaje copiado!",
-          description: "Pega para compartir ProTalker",
-          action: (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => window.open(generateShareLink(), '_blank')}
-            >
-              Abrir demo
-            </Button>
-          )
+          title: "¡Enlace copiado!",
+          description: "Pega para compartir ProTalker"
         });
       });
     }}
-    className="text-blue-600 hover:text-blue-800 text-sm flex items-center cursor-pointer"
+    className="text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center gap-1"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
     </svg>
     Compartir ProTalker
-  </a>
-)}
-              </div>
+  </Button>
+</div>
             </div>
           </div>
         </div>
