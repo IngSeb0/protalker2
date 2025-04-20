@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Bot, User, Mic, Send, Play } from "lucide-react";
 import { useConversation } from '@11labs/react';
+import React from "react";
 
 
 // Define API URL constants
@@ -305,7 +306,9 @@ const conversation = useConversation({
       });
     },
   });
-  
+  const Avatar = React.memo(({ shape }: { shape: string }) => {
+    return <img src={`/mouths/${shape}.png`} />;
+  });
   
   const startVoiceDemo = async () => {
     try {
@@ -396,7 +399,8 @@ const conversation = useConversation({
               </div>
               
               <TabsContent value="chat" className="flex-grow flex flex-col p-4">
-                <div 
+              <Avatar shape={mouthShape} />
+              <div 
                   ref={chatContainerRef}
                   className="flex-grow overflow-y-auto mb-4 space-y-4"
                 >
@@ -585,6 +589,7 @@ const conversation = useConversation({
               </p>
               <Button 
   onClick={startVoiceDemo} 
+  
   className="w-full flex items-center justify-center"
   disabled={conversation.status === 'connected'}
 >
