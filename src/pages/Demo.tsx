@@ -673,8 +673,7 @@ const conversation = useConversation({
   className="w-full flex items-center justify-center"
   disabled={conversation.status === 'connected'}
 >
-  <Play className="mr-2 h-4 w-4" />
-  Iniciar demo de voz
+  
 </Button>
 
 <Button 
@@ -704,24 +703,31 @@ const conversation = useConversation({
   Compartir mi progreso
 </Button>
 
-  <Button 
-    variant="link" 
-    onClick={() => {
-      const message = `¡Estoy mejorando mis habilidades con ProTalker! Prueba la demo: ${generateShareLink()}`;
-      navigator.clipboard.writeText(message).then(() => {
-        toast({
-          title: "¡Enlace copiado!",
-          description: "Pega para compartir ProTalker"
-        });
+<Button 
+  variant="link" 
+  onClick={() => {
+    const message = `¡Estoy mejorando mis habilidades con ProTalker! Prueba la demo: ${generateShareLink()}`;
+    navigator.clipboard.writeText(message).then(() => {
+      toast({
+        title: "¡Enlace copiado!",
+        description: "Pega para compartir ProTalker"
       });
-    }}
-    className="text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center gap-1"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-    </svg>
-    Compartir ProTalker
-  </Button>
+    }).catch((error) => {
+      console.error("Error al copiar al portapapeles:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo copiar el enlace"
+      });
+    });
+  }}
+  className="text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center gap-1"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+  </svg>
+  Compartir ProTalker
+</Button>
 </div>
             </div>
           </div>
