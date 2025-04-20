@@ -406,7 +406,7 @@ const conversation = useConversation({
               </div>
               
               <TabsContent value="chat" className="flex-grow flex flex-col p-4">
-              <Avatar shape={mouthShape} />
+            
               <div 
                   ref={chatContainerRef}
                   className="flex-grow overflow-y-auto mb-4 space-y-4"
