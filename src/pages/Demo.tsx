@@ -11,7 +11,10 @@ import { Bot, User, Mic, Send, Play } from "lucide-react";
 import { useConversation } from '@11labs/react';
 import React from "react";
 
-
+const [messages, setMessages] = useState<Array<{
+  type: 'user' | 'assistant',
+  content: string
+}>>([]);
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
 const BASE_API_URL = "http://localhost:5000";
@@ -33,6 +36,7 @@ export default function Demo() {
   const [mouthShape, setMouthShape] = useState("rest");
 const audioContextRef = useRef<AudioContext | null>(null);
 const analyserRef = useRef<AnalyserNode | null>(null);
+
   const [completedSessions, setCompletedSessions] = useState(() => {
     // Cargar desde localStorage si existe
     const saved = localStorage.getItem('completedSessions');
@@ -258,39 +262,48 @@ const analyserRef = useRef<AnalyserNode | null>(null);
 
  // Capturar el flujo de audio generado por ElevenLabs
 const conversation = useConversation({
-  onMessage: (msg) => {
+ onMessage: (msg) => {
     if (msg.source === "ai") {
-      console.log("[AGENTE]", msg.message);
+      setMessages(prev => [...prev, {
+        type: 'bot',  // Cambiado de 'bot' a 'assistant' para consistencia
+        content: msg.message
+      }]);
     }
   },
 
 
-  onAudioPlayback: (audioStream: MediaStream) => {
-    // Analizar el flujo de audio con Web Audio API
-    if (!audioContextRef.current) {
-      audioContextRef.current = new AudioContext();
-    }
+    onAudioPlayback: (audioStream: MediaStream) => {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContext();
+      }
 
-    const source = audioContextRef.current.createMediaStreamSource(audioStream);
-    analyserRef.current = audioContextRef.current.createAnalyser();
-    source.connect(analyserRef.current);
+      const source = audioContextRef.current.createMediaStreamSource(audioStream);
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      source.connect(analyserRef.current);
 
-    // Analizar las frecuencias del audio en tiempo real
-    const updateMouthShape = () => {
-      if (!analyserRef.current) return;
+      // Analizar las frecuencias del audio en tiempo real
+      const updateMouthShape = () => {
+        if (!analyserRef.current) return;
 
-      const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-      analyserRef.current.getByteFrequencyData(dataArray);
+        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+        analyserRef.current.getByteFrequencyData(dataArray);
 
-      // Usar la media de las frecuencias para decidir la forma de la boca
-      const avgFrequency = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-      setMouthShape(avgFrequency > 20 ? "open" : "rest");
+        // Usar la media de las frecuencias para decidir la forma de la boca
+        const avgFrequency = dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
+        
+        // Si la frecuencia promedio es alta, la boca está abierta
+        if (avgFrequency > 150) {
+          setMouthShape("open");
+        } else {
+          setMouthShape("rest");
+        }
 
-      requestAnimationFrame(updateMouthShape);
-    };
+        requestAnimationFrame(updateMouthShape); // Actualizar la forma de la boca en el siguiente ciclo
+      };
+      updateMouthShape();
+    },
 
-    updateMouthShape();
-  },
+
     onConnect: () => {
       toast({
         title: "🎙️ Conectado",
@@ -408,28 +421,36 @@ const conversation = useConversation({
               <TabsContent value="chat" className="flex-grow flex flex-col p-4">
             
               <div 
-                  ref={chatContainerRef}
-                  className="flex-grow overflow-y-auto mb-4 space-y-4"
-                >
-                  {messages.map((msg, index) => (
-                    <div 
-                      key={index}
-                      className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div 
-                        className={`max-w-[80%] rounded-lg p-3 ${msg.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
-                      >
-                        <div className="flex items-center mb-1">
-                          {msg.type === 'bot' ? <Bot size={14} className="mr-1" /> : <User size={14} className="mr-1" />}
-                          <span className="text-xs font-medium">
-                            {msg.type === 'user' ? 'Tú' : 'Asistente'}
-                          </span>
-                        </div>
-                        <p>{msg.content}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+  ref={chatContainerRef}
+  className="flex-grow overflow-y-auto mb-4 space-y-4"
+>
+  {messages.map((msg, index) => (
+    <div 
+      key={index}
+      className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
+    >
+      <div 
+        className={`max-w-[80%] rounded-lg p-3 ${
+          msg.type === 'user' 
+            ? 'bg-primary text-primary-foreground' 
+            : 'bg-muted'
+        }`}
+      >
+        <div className="flex items-center mb-1">
+          {msg.type === 'bot' ? (
+            <Bot size={14} className="mr-1" />
+          ) : (
+            <User size={14} className="mr-1" />
+          )}
+          <span className="text-xs font-medium">
+            {msg.type === 'user' ? 'Tú' : 'Asistente ElevenLabs'}
+          </span>
+        </div>
+        <p>{msg.content}</p>
+      </div>
+    </div>
+  ))}
+</div>
                 
                 <div className="flex gap-2">
                   <Button 
