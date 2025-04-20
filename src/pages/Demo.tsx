@@ -11,10 +11,7 @@ import { Bot, User, Mic, Send, Play } from "lucide-react";
 import { useConversation } from '@11labs/react';
 import React from "react";
 
-const [messages, setMessages] = useState<Array<{
-  type: 'user' | 'assistant',
-  content: string
-}>>([]);
+
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
 const BASE_API_URL = "http://localhost:5000";
