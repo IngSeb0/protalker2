@@ -14,9 +14,7 @@ import { useConversation } from '@11labs/react';
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
 const BASE_API_URL = "http://localhost:5000";
-const [mouthShape, setMouthShape] = useState("rest");
-const audioContextRef = useRef<AudioContext | null>(null);
-const analyserRef = useRef<AnalyserNode | null>(null);
+
   
 interface Badge {
   id: string;
@@ -31,6 +29,9 @@ export default function Demo() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const [greeting, setGreeting] = useState("");
+  const [mouthShape, setMouthShape] = useState("rest");
+const audioContextRef = useRef<AudioContext | null>(null);
+const analyserRef = useRef<AnalyserNode | null>(null);
   const [completedSessions, setCompletedSessions] = useState(() => {
     // Cargar desde localStorage si existe
     const saved = localStorage.getItem('completedSessions');
