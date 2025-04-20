@@ -392,7 +392,7 @@ const conversation = useConversation({
                 {greeting}
               </CardTitle>
               <CardDescription>
-                Aquí podrás probar las funcionalidades de ProTalker, cambios hechos.
+                Aquí podrás probar las funcionalidades de ProTalker.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -401,7 +401,7 @@ const conversation = useConversation({
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Demo de entrenamiento</h1>
           <p className="text-muted-foreground">
-            Interactúa con nuestro asistente para practicar tus habilidades de comunicación, NUEVOS CAMBIOS
+            Interactúa con nuestro asistente para practicar tus habilidades de comunicación.
           </p>
         </div>
         
