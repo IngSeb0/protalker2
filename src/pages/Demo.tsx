@@ -304,13 +304,7 @@ const conversation = useConversation({
       });
     },
   });
-  const Avatar = ({ shape }: { shape: string }) => {
-    return (
-      <div className="avatar-container">
-        <img src={`/mouths/${shape}.png`} alt="mouth" className="mouth-animation" />
-      </div>
-    );
-  };
+  
   
   const startVoiceDemo = async () => {
     try {
