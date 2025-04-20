@@ -149,21 +149,22 @@ const analyserRef = useRef<AnalyserNode | null>(null);
     const newlyAchieved = badges.filter(b => b.achieved && 
       !badges.find(prevBadge => prevBadge.id === b.id && prevBadge.achieved));
       
-    newlyAchieved.forEach(badge => {
-      toast({
-        title: `¡Nueva insignia desbloqueada! ${badge.image}`,
-        description: `${badge.title}: ${badge.description}`,
-        action: (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => shareBadge(badge)}
-          >
-            Compartir
-          </Button>
-        )
-      });
-    });
+   // Dentro del useEffect que notifica nuevas insignias
+newlyAchieved.forEach(badge => {
+  toast({
+    title: `¡Nueva insignia desbloqueada! ${badge.image}`,
+    description: `${badge.title}: ${badge.description}`,
+    action: (
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={() => shareBadge(badge)}
+      >
+        Compartir logro
+      </Button>
+    )
+  });
+});
   }, [badges]);
 
   // Función optimizada para incrementar sesiones
@@ -196,11 +197,11 @@ const analyserRef = useRef<AnalyserNode | null>(null);
   }, [completedSessions, badges]);
 
   const shareBadge = (badge: Badge) => {
-    const message = `¡He ganado la insignia "${badge.title}" usando ProTalker! 🎉\n\n${badge.description}\n\nÚnete para probar la demo del mejor simulador de entrevistas de trabajo en tiempo real: ${generateShareLink()}`;
+    const message = `${badge.shareMessage}\n\nPrueba la demo del mejor simulador de entrevistas en tiempo real: ${generateShareLink()}`;
   
     if (navigator.share) {
       navigator.share({
-        title: `Logré la insignia ${badge.title} en ProTalker`,
+        title: `¡Logré la insignia ${badge.title}!`,
         text: message,
         url: generateShareLink()
       }).catch(console.error);
@@ -208,7 +209,16 @@ const analyserRef = useRef<AnalyserNode | null>(null);
       navigator.clipboard.writeText(message).then(() => {
         toast({
           title: "¡Mensaje copiado!",
-          description: "Pega el mensaje para compartir tu logro"
+          description: "El mensaje con tu insignia ha sido copiado al portapapeles",
+          action: (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => window.open(generateShareLink(), '_blank')}
+            >
+              Abrir ProTalker
+            </Button>
+          )
         });
       });
     }
@@ -635,11 +645,20 @@ const conversation = useConversation({
               {shareLink && (
   <a 
     onClick={() => {
-      const message = `¡Estoy usando ProTalker, el mejor simulador de entrevistas de trabajo en tiempo real! Prueba la demo aquí: ${generateShareLink()}`;
+      const message = `¡Estoy mejorando mis habilidades de comunicación con ProTalker! Prueba la demo del mejor simulador de entrevistas en tiempo real: ${generateShareLink()}`;
       navigator.clipboard.writeText(message).then(() => {
         toast({
-          title: "¡Enlace copiado!",
-          description: "Pega el mensaje para compartir ProTalker"
+          title: "¡Mensaje copiado!",
+          description: "Pega para compartir ProTalker",
+          action: (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => window.open(generateShareLink(), '_blank')}
+            >
+              Abrir demo
+            </Button>
+          )
         });
       });
     }}
