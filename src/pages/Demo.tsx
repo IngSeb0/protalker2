@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Bot, User, Mic, Send, Play } from "lucide-react";
+import { Bot, User, Mic, Send, Play, Phone } from "lucide-react";
+import { MailIcon, CopyIcon, PhoneIcon} from "lucide-react";
 import { useConversation } from '@11labs/react';
 import React from "react";
 
@@ -223,6 +224,23 @@ newlyAchieved.forEach(badge => {
       });
     }
   };
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast({
+        title: "¡Mensaje copiado!",
+        description: "Pega para compartir tu logro",
+        action: (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => window.open(generateShareLink(), '_blank')}
+          >
+            Abrir ProTalker
+          </Button>
+        )
+      });
+    });
+  };
   //Compartir el progreso actual.
   const shareProgress = () => {
     const achievedBadges = badges.filter(b => b.achieved);
@@ -358,6 +376,42 @@ const conversation = useConversation({
   const Avatar = React.memo(({ shape }: { shape: string }) => {
     return <img src={`/mouths/${shape}.png`} />;
   });
+  const ShareButtons = ({ badge }: { badge: Badge }) => {
+    {badges.filter(b => b.achieved).map((badge) => (
+      <div key={badge.id}>
+        {/* ... tu contenido existente de la insignia ... */}
+        <ShareButtons badge={badge} />
+      </div>
+    ))}
+
+    const fullMessage = `${badge.shareMessage}\n\nDemo: ${generateShareLink()}`;
+    const shortMessage = `¡Logré ${badge.title}! ${generateShareLink()}`;
+  
+    return (
+      <div className="flex gap-2">
+        <a
+          href={`mailto:?body=${encodeURIComponent(fullMessage)}`}
+          className="btn btn-outline"
+        >
+          <MailIcon className="mr-2" /> Email
+        </a>
+        
+        <a
+          href={`https://wa.me/?text=${encodeURIComponent(shortMessage)}`}
+          className="btn btn-outline"
+        >
+          <PhoneIcon className="mr-2" /> WhatsApp
+        </a>
+  
+        <button 
+          onClick={() => copyToClipboard(fullMessage)}
+          className="btn btn-outline"
+        >
+          <CopyIcon className="mr-2" /> Copiar
+        </button>
+      </div>
+    );
+  };
   
   const startVoiceDemo = async () => {
     try {
