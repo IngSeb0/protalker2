@@ -377,12 +377,7 @@ const conversation = useConversation({
     return <img src={`/mouths/${shape}.png`} />;
   });
   const ShareButtons = ({ badge }: { badge: Badge }) => {
-    {badges.filter(b => b.achieved).map((badge) => (
-      <div key={badge.id}>
-        {/* ... tu contenido existente de la insignia ... */}
-        <ShareButtons badge={badge} />
-      </div>
-    ))}
+    
 
     const fullMessage = `${badge.shareMessage}\n\nDemo: ${generateShareLink()}`;
     const shortMessage = `¡Logré ${badge.title}! ${generateShareLink()}`;
@@ -675,7 +670,9 @@ const conversation = useConversation({
                         <span className="text-2xl mb-1">{badge.image}</span>
                         <span className="text-xs font-medium text-center">{badge.title}</span>
                         <span className="text-xs text-muted-foreground text-center">{badge.description}</span>
-                      </div>
+                        <ShareButtons badge={badge} />
+
+                    </div>
                     ))}
                     
                     {badges.filter(b => !b.achieved).map((badge) => (
@@ -724,16 +721,16 @@ const conversation = useConversation({
                 Iniciar demo de voz
              
                 <div className="mt-4 flex flex-col gap-2">
-  <Button 
-    variant="outline" 
-    onClick={shareProgress}
-    className="flex items-center justify-center gap-2"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-    </svg>
-    Compartir mi progreso
-  </Button>
+                <Button 
+  variant="outline" 
+  onClick={shareProgress}
+  className="flex items-center justify-center gap-2 mt-4"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+  </svg>
+  Compartir mi progreso
+</Button>
 
   <Button 
     variant="link" 
