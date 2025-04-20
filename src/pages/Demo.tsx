@@ -670,9 +670,10 @@ const conversation = useConversation({
                         <span className="text-2xl mb-1">{badge.image}</span>
                         <span className="text-xs font-medium text-center">{badge.title}</span>
                         <span className="text-xs text-muted-foreground text-center">{badge.description}</span>
-                        <ShareButtons badge={badge} />
+                      
 
                     </div>
+                    
                     ))}
                     
                     {badges.filter(b => !b.achieved).map((badge) => (
@@ -685,6 +686,7 @@ const conversation = useConversation({
                         <span className="text-xs text-muted-foreground text-center">{badge.description}</span>
                       </div>
                     ))}
+              
                   </div>
                 </div>
               </div>
