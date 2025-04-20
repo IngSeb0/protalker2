@@ -258,6 +258,13 @@ const analyserRef = useRef<AnalyserNode | null>(null);
 
  // Capturar el flujo de audio generado por ElevenLabs
 const conversation = useConversation({
+  onMessage: (msg) => {
+    if (msg.source === "ai") {
+      console.log("[AGENTE]", msg.message);
+    }
+  },
+
+
   onAudioPlayback: (audioStream: MediaStream) => {
     // Analizar el flujo de audio con Web Audio API
     if (!audioContextRef.current) {
