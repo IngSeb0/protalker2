@@ -688,8 +688,7 @@ const conversation = useConversation({
   Estado: <strong>{conversation.status}</strong> — Agente está: <strong>{conversation.isSpeaking ? 'Hablando' : 'Escuchando'}</strong>
 </div>
                     
-                <Play className="mr-2 h-4 w-4" />
-                Iniciar demo de voz
+                
              
                 <div className="mt-4 flex flex-col gap-2">
                 <Button 
