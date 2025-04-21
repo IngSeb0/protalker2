@@ -673,7 +673,7 @@ const conversation = useConversation({
   className="w-full flex items-center justify-center"
   disabled={conversation.status === 'connected'}
 >
-  
+  Iniciar demo de voz
 </Button>
 
 <Button 
