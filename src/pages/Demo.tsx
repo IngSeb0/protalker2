@@ -11,6 +11,7 @@ import { Bot, User, Mic, Send, Play, Phone } from "lucide-react";
 import { MailIcon, CopyIcon, PhoneIcon} from "lucide-react";
 import { useConversation } from '@11labs/react';
 import React from "react";
+import * as THREE from 'three';
 
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
@@ -32,6 +33,11 @@ export default function Demo() {
   const [mouthShape, setMouthShape] = useState("rest");
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
+
+  const avatarRef = useRef<THREE.Mesh | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
 
   const [completedSessions, setCompletedSessions] = useState(() => {
     const saved = localStorage.getItem('completedSessions');
@@ -362,48 +368,57 @@ export default function Demo() {
     },
   });
   
-  const Avatar = React.memo(({ shape }: { shape: string }) => {
-    return (
-      <div className="avatar-container">
-        <img
-          src={`/mouths/${shape}.png`}
-          alt={`Avatar mouth shape: ${shape}`}
-          className="avatar-mouth"
-        />
-      </div>
-    );
-  });
+  useEffect(() => {
+    // Initialize Three.js scene
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('avatar-container')?.appendChild(renderer.domElement);
 
-  const ShareButtons = ({ badge }: { badge: Badge }) => {
-    const fullMessage = `${badge.shareMessage}\n\nDemo: ${generateShareLink()}`;
-    const shortMessage = `¡Logré ${badge.title}! ${generateShareLink()}`;
-  
-    return (
-      <div className="flex gap-2">
-        <a
-          href={`mailto:?body=${encodeURIComponent(fullMessage)}`}
-          className="btn btn-outline"
-        >
-          <MailIcon className="mr-2" /> Email
-        </a>
-  
-        <a
-          href={`https://wa.me/?text=${encodeURIComponent(shortMessage)}`}
-          className="btn btn-outline"
-        >
-          <PhoneIcon className="mr-2" /> WhatsApp
-        </a>
-  
-        <button
-          onClick={() => copyToClipboard(fullMessage)}
-          className="btn btn-outline"
-        >
-          <CopyIcon className="mr-2" /> Copiar
-        </button>
-      </div>
-    );
-  };
-  
+    // Create a simple avatar (a sphere for the head)
+    const geometry = new THREE.SphereGeometry(1, 32, 32);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const avatar = new THREE.Mesh(geometry, material);
+    scene.add(avatar);
+
+    camera.position.z = 5;
+
+    avatarRef.current = avatar;
+    sceneRef.current = scene;
+    rendererRef.current = renderer;
+    cameraRef.current = camera;
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    return () => {
+      // Cleanup Three.js resources
+      renderer.dispose();
+      scene.clear();
+    };
+  }, []);
+
+  useEffect(() => {
+    const updateAvatarMouth = () => {
+      if (!analyserRef.current || !avatarRef.current) return;
+
+      const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+      analyserRef.current.getByteFrequencyData(dataArray);
+
+      const avgFrequency = dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
+
+      // Adjust avatar's mouth size based on frequency
+      avatarRef.current.scale.y = 1 + avgFrequency / 200;
+    };
+
+    const interval = setInterval(updateAvatarMouth, 100);
+    return () => clearInterval(interval);
+  }, []);
+
   const startVoiceDemo = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -471,6 +486,8 @@ export default function Demo() {
           </p>
         </div>
 
+        <div id="avatar-container" className="w-full h-64 bg-gray-200 rounded-lg mb-6"></div>
+
         <div className="flex flex-col md:flex-row gap-6 flex-grow">
           <div className="w-full md:w-3/4 bg-white rounded-lg shadow-md flex flex-col">
             <Tabs defaultValue="chat" className="flex-grow flex flex-col">
@@ -482,9 +499,6 @@ export default function Demo() {
               </div>
 
               <TabsContent value="chat" className="flex-grow flex flex-col p-4">
-                <div className="avatar-wrapper mb-4">
-                  <Avatar shape={mouthShape} />
-                </div>
                 <div
                   ref={chatContainerRef}
                   className="flex-grow overflow-y-auto mb-4 space-y-4"
