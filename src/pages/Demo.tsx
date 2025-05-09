@@ -11,7 +11,8 @@ import { Bot, User, Mic, Send, Play, Phone } from "lucide-react";
 import { MailIcon, CopyIcon, PhoneIcon} from "lucide-react";
 import { useConversation } from '@11labs/react';
 import React from "react";
-import * as THREE from 'three';
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import * as THREE from "three";
 
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
@@ -33,11 +34,9 @@ export default function Demo() {
   const [mouthShape, setMouthShape] = useState("rest");
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-
-  const avatarRef = useRef<THREE.Mesh | null>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const avatarRef = useRef<HTMLDivElement | null>(null);
+  const [scene, setScene] = useState<THREE.Scene | null>(null);
+  const [mixer, setMixer] = useState<THREE.AnimationMixer | null>(null);
 
   const [completedSessions, setCompletedSessions] = useState(() => {
     const saved = localStorage.getItem('completedSessions');
@@ -270,7 +269,6 @@ export default function Demo() {
     }
   };
 
-
   const conversation = useConversation({
     onMessage: (msg) => {
       if (msg.source === "ai") {
@@ -367,57 +365,87 @@ export default function Demo() {
       });
     },
   });
-  
+
   useEffect(() => {
+    if (!avatarRef.current) return;
+
     // Initialize Three.js scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('avatar-container')?.appendChild(renderer.domElement);
+    const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
+    camera.position.z = 2;
 
-    // Create a simple avatar (a sphere for the head)
-    const geometry = new THREE.SphereGeometry(1, 32, 32);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const avatar = new THREE.Mesh(geometry, material);
-    scene.add(avatar);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
+    avatarRef.current.appendChild(renderer.domElement);
 
-    camera.position.z = 5;
+    // Add lighting
+    const light = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(light);
 
-    avatarRef.current = avatar;
-    sceneRef.current = scene;
-    rendererRef.current = renderer;
-    cameraRef.current = camera;
+    // Load 3D model
+    const loader = new GLTFLoader();
+    loader.load(
+      "/public/lovable-uploads/3257b863-0ee8-41ee-84ef-228bdee1d70c.gltf", // Updated path to a valid .gltf file
+      (gltf) => {
+        const model = gltf.scene;
+        scene.add(model);
 
+        // Setup morph target animations
+        const mixer = new THREE.AnimationMixer(model);
+        if (gltf.animations.length > 0) {
+          const action = mixer.clipAction(gltf.animations[0]);
+          action.play();
+        }
+
+        // Synchronize morph targets with mouthShape state
+        const morphTargets = model.children.find((child) => {
+          return (child as THREE.Mesh).morphTargetInfluences !== undefined;
+        }) as THREE.Mesh | undefined;
+
+        if (morphTargets && morphTargets.morphTargetInfluences) {
+          morphTargets.morphTargetInfluences[0] = 1;
+          morphTargets.morphTargetInfluences[0] = 0;
+        }
+
+        setMixer(mixer);
+      },
+      undefined,
+      (error) => {
+        console.error("Error loading 3D model:", error);
+      }
+    );
+
+    setScene(scene);
+
+    // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
+      if (mixer) mixer.update(0.01);
       renderer.render(scene, camera);
     };
     animate();
 
+    // Cleanup
     return () => {
-      // Cleanup Three.js resources
       renderer.dispose();
-      scene.clear();
+      avatarRef.current?.removeChild(renderer.domElement);
     };
   }, []);
 
   useEffect(() => {
-    const updateAvatarMouth = () => {
-      if (!analyserRef.current || !avatarRef.current) return;
+    if (!mixer) return;
 
-      const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-      analyserRef.current.getByteFrequencyData(dataArray);
-
-      const avgFrequency = dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
-
-      // Adjust avatar's mouth size based on frequency
-      avatarRef.current.scale.y = 1 + avgFrequency / 200;
-    };
-
-    const interval = setInterval(updateAvatarMouth, 100);
-    return () => clearInterval(interval);
-  }, []);
+    // Example: Update morph targets based on mouthShape state
+    const model = scene?.children.find((child) => child.name === "YourModelName"); // Replace with your model's name
+    if (model && "morphTargetInfluences" in model) {
+      const influences = model.morphTargetInfluences;
+      if (mouthShape === "open") {
+        influences[0] = 1; // Adjust indices based on your model's morph targets
+      } else {
+        influences[0] = 0;
+      }
+    }
+  }, [mouthShape, mixer, scene]);
 
   const startVoiceDemo = async () => {
     try {
@@ -446,7 +474,6 @@ export default function Demo() {
   const stopVoiceDemo = async () => {
     await conversation.endSession();
   };
-
 
   const handleLogout = async () => {
     await signOut();
@@ -486,7 +513,7 @@ export default function Demo() {
           </p>
         </div>
 
-        <div id="avatar-container" className="w-full h-64 bg-gray-200 rounded-lg mb-6"></div>
+        <div className="avatar-wrapper mb-4" ref={avatarRef} style={{ width: "100%", height: "400px" }}></div>
 
         <div className="flex flex-col md:flex-row gap-6 flex-grow">
           <div className="w-full md:w-3/4 bg-white rounded-lg shadow-md flex flex-col">
@@ -593,7 +620,7 @@ export default function Demo() {
           </div>
 
           <div className="w-full md:w-1/4 space-y-4">
-            <div className="bg-white rounded-lg shadow-md p-4">
+            <div className="bg-white rounded-lg shadow-md p-4"></div>
               <h3 className="font-medium mb-3">Escenarios disponibles</h3>
               <ul className="space-y-2">
                 <li>
@@ -784,7 +811,7 @@ export default function Demo() {
               </div>
             </div>
           </div>
-        </div>
+      
       </main>
     </div>
   );
