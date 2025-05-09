@@ -385,9 +385,10 @@ export default function Demo() {
     // Load 3D model
     const loader = new GLTFLoader();
     loader.load(
-      "/public/lovable-uploads/3257b863-0ee8-41ee-84ef-228bdee1d70c.gltf", // Updated path to a valid .gltf file
+      "public/lovable-uploads/office_employee.glb", // Path to the GLB model
       (gltf) => {
         const model = gltf.scene;
+        model.name = "InterviewModel"; // Assign a unique name to the model
         scene.add(model);
 
         // Setup morph target animations
@@ -403,11 +404,27 @@ export default function Demo() {
         }) as THREE.Mesh | undefined;
 
         if (morphTargets && morphTargets.morphTargetInfluences) {
-          morphTargets.morphTargetInfluences[0] = 1;
-          morphTargets.morphTargetInfluences[0] = 0;
+          morphTargets.morphTargetInfluences[0] = 0; // Initialize to rest position
         }
 
         setMixer(mixer);
+
+        // Update mouthShape based on ElevenLabs events
+        useEffect(() => {
+          if (!mixer) return;
+
+          const updateMorphTargets = () => {
+            if (morphTargets && morphTargets.morphTargetInfluences) {
+              if (mouthShape === "open") {
+                morphTargets.morphTargetInfluences[0] = 1;
+              } else {
+                morphTargets.morphTargetInfluences[0] = 0;
+              }
+            }
+          };
+
+          updateMorphTargets();
+        }, [mouthShape, mixer]);
       },
       undefined,
       (error) => {
@@ -436,7 +453,7 @@ export default function Demo() {
     if (!mixer) return;
 
     // Example: Update morph targets based on mouthShape state
-    const model = scene?.children.find((child) => child.name === "YourModelName"); // Replace with your model's name
+    const model = scene?.children.find((child) => child.name === "InterviewModel"); // Ensure only the intended model is updated
     if (model && "morphTargetInfluences" in model) {
       const influences = model.morphTargetInfluences;
       if (mouthShape === "open") {
