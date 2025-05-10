@@ -373,8 +373,8 @@ export default function Demo() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
 
-    // Adjust camera position to better frame the model (shoulders up)
-    camera.position.set(0, 1.6, 1.8);
+    // Adjust camera position to better frame the animated model
+    camera.position.set(0, 1.6, 1.8); // Focus on shoulders up
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
@@ -387,16 +387,22 @@ export default function Demo() {
     directionalLight.position.set(0, 2, 2);
     scene.add(ambientLight, directionalLight);
 
-    // Load 3D model
+    // Load 3D model with updated pose and animation
     const loader = new GLTFLoader();
     loader.load(
-      "lovable-uploads/buisness_man_with_talking_animation.glb", // Corrected path to the GLB model
+      "lovable-uploads/buisness_man_with_talking_animation.glb",
       (gltf) => {
         const model = gltf.scene;
-        model.name = "InterviewModel"; // Assign a unique name to the model
+        model.name = "InterviewModel";
         scene.add(model);
 
-        // Setup morph target animations
+        // Set the initial pose to CC3_BASE_PLUS_TEMPMOTION
+        const pose = model.getObjectByName("CC3_BASE_PLUS_TEMPMOTION");
+        if (pose) {
+          pose.visible = true;
+        }
+
+        // Setup morph target animations for mouth movement
         const mixer = new THREE.AnimationMixer(model);
         if (gltf.animations.length > 0) {
           const action = mixer.clipAction(gltf.animations[0]);
@@ -450,32 +456,50 @@ export default function Demo() {
   useEffect(() => {
     if (!mixer) return;
 
-    // Example: Update morph targets based on mouthShape state
-    const model = scene?.children.find((child) => child.name === "InterviewModel"); // Ensure only the intended model is updated
+    const model = scene?.children.find((child) => child.name === "InterviewModel");
     if (model && "morphTargetInfluences" in model) {
       const influences = model.morphTargetInfluences;
-      if (mouthShape === "open") {
-        influences[0] = 1; // Adjust indices based on your model's morph targets
-      } else {
-        influences[0] = 0;
-      }
+
+      const updateMouthShape = () => {
+        if (!analyserRef.current) return;
+
+        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+        analyserRef.current.getByteFrequencyData(dataArray);
+
+        const avgFrequency = dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
+
+        // Map frequencies to mouth shapes
+        if (avgFrequency > 200) {
+          influences[0] = 1; // Open mouth
+        } else {
+          influences[0] = 0; // Rest position
+        }
+
+        requestAnimationFrame(updateMouthShape);
+      };
+
+      updateMouthShape();
     }
-  }, [mouthShape, mixer, scene]);
+  }, [mixer, scene]);
 
   const startVoiceDemo = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-  
+
       await conversation.startSession({
         agentId: 'P1ORnc1dGjU8sp1tdcOu',
       });
-  
+
       setMessages(prev => [
         ...prev,
         { type: "bot", content: "Sesión de voz iniciada con ElevenLabs. ¡Puedes hablar ahora!" }
       ]);
-  
+
       incrementSessions();
+
+      if (mixer) {
+        mixer.timeScale = 1; // Resume animation
+      }
     } catch (error) {
       console.error(error);
       toast({
@@ -485,9 +509,13 @@ export default function Demo() {
       });
     }
   };
-  
+
   const stopVoiceDemo = async () => {
     await conversation.endSession();
+
+    if (mixer) {
+      mixer.timeScale = 0; // Pause animation
+    }
   };
 
   const handleLogout = async () => {
