@@ -484,6 +484,20 @@ export default function Demo() {
     }
   }, [mixer, scene]);
 
+  {/* Pause Sketchfab model when ElevenLabs stops speaking */}
+  useEffect(() => {
+    const iframe = document.querySelector<HTMLIFrameElement>('iframe[title="Buisness man (With talking animation)"]');
+    if (!iframe) return;
+
+    if (conversation.status === 'connected' && conversation.isSpeaking) {
+      // Resume the iframe if needed
+      iframe.contentWindow?.postMessage('play', '*');
+    } else {
+      // Pause the iframe when not speaking
+      iframe.contentWindow?.postMessage('pause', '*');
+    }
+  }, [conversation.status, conversation.isSpeaking]);
+
   const startVoiceDemo = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -558,7 +572,45 @@ export default function Demo() {
           </p>
         </div>
 
-        <div className="avatar-wrapper mb-4" ref={avatarRef} style={{ width: "100%", height: "400px" }}></div>
+        {/* Embed Sketchfab model */}
+        <div className="sketchfab-embed-wrapper">
+          <iframe
+            title="Buisness man (With talking animation)"
+            frameBorder="0"
+            allowFullScreen
+            allow="autoplay; fullscreen; xr-spatial-tracking"
+            src="https://sketchfab.com/models/3fe2b15e0c884b66b987f6f48e420f56/embed"
+            style={{ width: "100%", height: "400px" }}
+          ></iframe>
+          <p style={{ fontSize: "13px", fontWeight: "normal", margin: "5px", color: "#4A4A4A" }}>
+            <a
+              href="https://sketchfab.com/3d-models/buisness-man-with-talking-animation-3fe2b15e0c884b66b987f6f48e420f56?utm_medium=embed&utm_campaign=share-popup&utm_content=3fe2b15e0c884b66b987f6f48e420f56"
+              target="_blank"
+              rel="nofollow"
+              style={{ fontWeight: "bold", color: "#1CAAD9" }}
+            >
+              Buisness man (With talking animation)
+            </a>{" "}
+            by{" "}
+            <a
+              href="https://sketchfab.com/art.piskov?utm_medium=embed&utm_campaign=share-popup&utm_content=3fe2b15e0c884b66b987f6f48e420f56"
+              target="_blank"
+              rel="nofollow"
+              style={{ fontWeight: "bold", color: "#1CAAD9" }}
+            >
+              art.piskov
+            </a>{" "}
+            on{" "}
+            <a
+              href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=3fe2b15e0c884b66b987f6f48e420f56"
+              target="_blank"
+              rel="nofollow"
+              style={{ fontWeight: "bold", color: "#1CAAD9" }}
+            >
+              Sketchfab
+            </a>
+          </p>
+        </div>
 
         <div className="flex flex-col md:flex-row gap-6 flex-grow">
           <div className="w-full md:w-3/4 bg-white rounded-lg shadow-md flex flex-col">
