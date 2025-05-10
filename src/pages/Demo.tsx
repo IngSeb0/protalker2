@@ -386,7 +386,7 @@ export default function Demo() {
     // Load 3D model
     const loader = new GLTFLoader();
     loader.load(
-      "lovable-uploads\buisness_man_with_talking_animation.glb", 
+      "public\lovable-uploads\buisness_man_with_talking_animation.glb", // Corrected path to the GLB model
       (gltf) => {
         const model = gltf.scene;
         model.name = "InterviewModel"; // Assign a unique name to the model
