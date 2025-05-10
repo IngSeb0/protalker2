@@ -386,7 +386,7 @@ export default function Demo() {
     // Load 3D model
     const loader = new GLTFLoader();
     loader.load(
-      "/lovable-uploads/office_employee.glb", // Corrected path to the GLB model
+      "lovable-uploads\buisness_man_with_talking_animation.glb", 
       (gltf) => {
         const model = gltf.scene;
         model.name = "InterviewModel"; // Assign a unique name to the model
@@ -415,6 +415,17 @@ export default function Demo() {
         console.error("Error loading 3D model:", error);
       }
     );
+
+    // Adjust camera position to show only shoulders up
+    camera.position.set(0, 1.5, 2); // Move the camera up and closer
+
+    // Set the background color to a light gray
+    scene.background = new THREE.Color(0xf0f0f0);
+
+    // Center the canvas in the container
+    renderer.domElement.style.position = "relative";
+    renderer.domElement.style.margin = "0 auto";
+    renderer.domElement.style.display = "block";
 
     // Adjust canvas size to fit the container
     renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
