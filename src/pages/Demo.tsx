@@ -372,16 +372,20 @@ export default function Demo() {
     // Initialize Three.js scene
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
-    camera.position.z = 2;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    // Adjust camera position to better frame the model (shoulders up)
+    camera.position.set(0, 1.6, 1.8);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     avatarRef.current.appendChild(renderer.domElement);
 
     // Add lighting
-    const light = new THREE.AmbientLight(0xffffff, 1);
-    scene.add(light);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Softer ambient light
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6); // Directional light for better visibility
+    directionalLight.position.set(0, 2, 2);
+    scene.add(ambientLight, directionalLight);
 
     // Load 3D model
     const loader = new GLTFLoader();
@@ -399,15 +403,6 @@ export default function Demo() {
           action.play();
         }
 
-        // Synchronize morph targets with mouthShape state
-        const morphTargets = model.children.find((child) => {
-          return (child as THREE.Mesh).morphTargetInfluences !== undefined;
-        }) as THREE.Mesh | undefined;
-
-        if (morphTargets && morphTargets.morphTargetInfluences) {
-          morphTargets.morphTargetInfluences[0] = 0; // Initialize to rest position
-        }
-
         setMixer(mixer);
       },
       undefined,
@@ -415,9 +410,6 @@ export default function Demo() {
         console.error("Error loading 3D model:", error);
       }
     );
-
-    // Adjust camera position to show only shoulders up
-    camera.position.set(0, 1.5, 2); // Move the camera up and closer
 
     // Set the background color to a light gray
     scene.background = new THREE.Color(0xf0f0f0);
