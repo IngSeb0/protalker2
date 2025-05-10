@@ -376,6 +376,7 @@ export default function Demo() {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
     avatarRef.current.appendChild(renderer.domElement);
 
     // Add lighting
@@ -385,7 +386,7 @@ export default function Demo() {
     // Load 3D model
     const loader = new GLTFLoader();
     loader.load(
-      "public/lovable-uploads/office_employee.glb", // Path to the GLB model
+      "/lovable-uploads/office_employee.glb", // Corrected path to the GLB model
       (gltf) => {
         const model = gltf.scene;
         model.name = "InterviewModel"; // Assign a unique name to the model
@@ -408,29 +409,23 @@ export default function Demo() {
         }
 
         setMixer(mixer);
-
-        // Update mouthShape based on ElevenLabs events
-        useEffect(() => {
-          if (!mixer) return;
-
-          const updateMorphTargets = () => {
-            if (morphTargets && morphTargets.morphTargetInfluences) {
-              if (mouthShape === "open") {
-                morphTargets.morphTargetInfluences[0] = 1;
-              } else {
-                morphTargets.morphTargetInfluences[0] = 0;
-              }
-            }
-          };
-
-          updateMorphTargets();
-        }, [mouthShape, mixer]);
       },
       undefined,
       (error) => {
         console.error("Error loading 3D model:", error);
       }
     );
+
+    // Adjust canvas size to fit the container
+    renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    // Ensure the canvas does not overflow or disrupt the layout
+    renderer.domElement.style.position = "absolute";
+    renderer.domElement.style.top = "0";
+    renderer.domElement.style.left = "0";
+    renderer.domElement.style.width = "100%";
+    renderer.domElement.style.height = "100%";
 
     setScene(scene);
 
