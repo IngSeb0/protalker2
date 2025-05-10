@@ -397,13 +397,15 @@ export default function Demo() {
         scene.add(model);
 
         // Set the initial pose to CC3_BASE_PLUS_TEMPMOTION
-        const pose = model.getObjectByName("CC3_BASE_PLUS_TEMPMOTION");
+        const pose = model.getObjectByName("CC3_Base_Plus_TempMotion");
+       
+        
         if (pose) {
           pose.visible = true;
         }
 
         // Setup morph target animations for mouth movement
-        const mixer = new THREE.AnimationMixer(model);
+        const mixer = new THREE.AnimationMixer(pose);
         if (gltf.animations.length > 0) {
           const action = mixer.clipAction(gltf.animations[0]);
           action.play();
@@ -418,7 +420,7 @@ export default function Demo() {
     );
 
     // Set the background color to a light gray
-    scene.background = new THREE.Color(0xf0f0f0);
+
 
     // Center the canvas in the container
     renderer.domElement.style.position = "relative";
