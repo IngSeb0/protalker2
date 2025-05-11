@@ -381,8 +381,6 @@ export default function Demo() {
     renderer.setPixelRatio(window.devicePixelRatio);
     avatarRef.current.appendChild(renderer.domElement);
 
-   
-
     // Load 3D model with updated pose and animation
     const loader = new GLTFLoader();
     loader.load(
@@ -390,29 +388,28 @@ export default function Demo() {
       (gltf) => {
         const model = gltf.scene;
         model.name = "InterviewModel";
-       
+        scene.add(model);
 
-        // Set the initial pose to CC3_BASE_PLUS_TEMPMOTION
+        // Buscar y configurar la pose inicial
         const pose = model.getObjectByName("CC3_Base_Plus_TempMotion");
-       
-        
         if (pose) {
-
           pose.visible = true;
+        } else {
+          console.warn("No se encontró la pose 'CC3_Base_Plus_TempMotion' en el modelo GLTF.");
         }
 
-        // Setup morph target animations for mouth movement
-        const mixer = new THREE.AnimationMixer(pose);
+        // Configurar animaciones
+        const mixer = new THREE.AnimationMixer(model);
         if (gltf.animations.length > 0) {
           const action = mixer.clipAction(gltf.animations[0]);
           action.play();
         }
-        scene.add(pose);
+
         setMixer(mixer);
       },
       undefined,
       (error) => {
-        console.error("Error loading 3D model:", error);
+        console.error("Error al cargar el modelo GLTF:", error);
       }
     );
 
