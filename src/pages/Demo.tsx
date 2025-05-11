@@ -374,12 +374,18 @@ export default function Demo() {
     const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
 
     // Adjust camera position to better frame the animated model
-    camera.position.set(0, 0,0); // Focus on shoulders up
+    camera.position.set(0, 1.6, 1.8); // Focus on shoulders up
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     avatarRef.current.appendChild(renderer.domElement);
+
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Softer ambient light
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6); // Directional light for better visibility
+    directionalLight.position.set(0, 2, 2);
+    scene.add(ambientLight, directionalLight);
 
     // Load 3D model with updated pose and animation
     const loader = new GLTFLoader();
@@ -390,16 +396,18 @@ export default function Demo() {
         model.name = "InterviewModel";
         scene.add(model);
 
-        // Buscar y configurar la pose inicial
+        // Set the initial pose to CC3_BASE_PLUS_TEMPMOTION
         const pose = model.getObjectByName("CC3_Base_Plus_TempMotion");
+       
+        
         if (pose) {
           pose.visible = true;
-        } else {
-          console.warn("No se encontró la pose 'CC3_Base_Plus_TempMotion' en el modelo GLTF.");
+             scene.add(pose);
+
         }
 
-        // Configurar animaciones
-        const mixer = new THREE.AnimationMixer(model);
+        // Setup morph target animations for mouth movement
+        const mixer = new THREE.AnimationMixer(pose);
         if (gltf.animations.length > 0) {
           const action = mixer.clipAction(gltf.animations[0]);
           action.play();
@@ -409,7 +417,7 @@ export default function Demo() {
       },
       undefined,
       (error) => {
-        console.error("Error al cargar el modelo GLTF:", error);
+        console.error("Error loading 3D model:", error);
       }
     );
 
