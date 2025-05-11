@@ -374,7 +374,7 @@ export default function Demo() {
     const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
 
     // Adjust camera position to better frame the animated model
-    camera.position.set(0, 10,6); // Focus on shoulders up
+    camera.position.set(0, 0,0); // Focus on shoulders up
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
