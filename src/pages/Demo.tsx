@@ -442,10 +442,21 @@ const animationActiveRef = useRef(false);
       avatarRef.current?.removeChild(renderer.domElement);
     };
   }, []);
-useEffect(() => {
-  if (!mixer || !scene) return;
 
-  if (conversation.isSpeaking && conversation.status === 'connected') {
+  const startVoiceDemo = async () => {
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      await conversation.startSession({
+        agentId: 'P1ORnc1dGjU8sp1tdcOu',
+      });
+     
+
+      setMessages(prev => [
+        ...prev,
+        { type: "bot", content: "Sesión de voz iniciada con ElevenLabs. ¡Puedes hablar ahora!" }
+      ]);
+     if (conversation.isSpeaking && conversation.status === 'connected') {
     mixer.timeScale = 1;
     animationActiveRef.current = true;
 
@@ -456,23 +467,6 @@ useEffect(() => {
     mixer.timeScale = 0;
     animationActiveRef.current = false;
   }
-}, [conversation.isSpeaking, mixer, scene]);
-
-  const startVoiceDemo = async () => {
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      await conversation.startSession({
-        agentId: 'P1ORnc1dGjU8sp1tdcOu',
-      });
-
-      setMessages(prev => [
-        ...prev,
-        { type: "bot", content: "Sesión de voz iniciada con ElevenLabs. ¡Puedes hablar ahora!" }
-      ]);
-      if (mixer) {
-      mixer.timeScale=1;
-    }
       incrementSessions();  
 
       setIsAnimating(true); // Activa la animación
