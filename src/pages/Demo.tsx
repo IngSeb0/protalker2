@@ -365,34 +365,28 @@ export default function Demo() {
   useEffect(() => {
     if (!avatarRef.current) return;
 
-    // Initialize Three.js scene
     const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
-
-    // Adjust camera position to better frame the animated model
-    camera.position.set(0, 1.6, 1.8); // Focus on shoulders up
+    camera.position.set(0, 1.6, 1.8);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     avatarRef.current.appendChild(renderer.domElement);
 
-    // Add lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Softer ambient light
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6); // Directional light for better visibility
+    const scene = new THREE.Scene();
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
     directionalLight.position.set(0, 2, 2);
-    
+    scene.add(ambientLight, directionalLight);
+
     const loader = new GLTFLoader();
     loader.load(
-      "lovable-uploads/scene.gltf", // Usar la escena completa
+      "lovable-uploads/scene.gltf",
       (gltf) => {
         const loadedScene = gltf.scene;
         loadedScene.name = "CompleteScene";
+        scene.add(loadedScene);
 
-        // Agregar la escena completa al renderizador
-        scene?.add(loadedScene);
-        renderer.render(scene, camera);
-
-        // Configurar animaciones si existen
         const mixer = new THREE.AnimationMixer(loadedScene);
         if (gltf.animations.length > 0) {
           const action = mixer.clipAction(gltf.animations[0]);
@@ -400,6 +394,14 @@ export default function Demo() {
         }
 
         setMixer(mixer);
+
+        // Iniciar el bucle de animación solo después de cargar la escena
+        const animate = () => {
+          requestAnimationFrame(animate);
+          if (mixer) mixer.update(0.01);
+          renderer.render(scene, camera);
+        };
+        animate();
       },
       undefined,
       (error) => {
@@ -407,34 +409,6 @@ export default function Demo() {
       }
     );
 
-    // Set the background color to a light gray
-
-
-    // Center the canvas in the container
-    renderer.domElement.style.position = "relative";
-    renderer.domElement.style.margin = "0 auto";
-    renderer.domElement.style.display = "block";
-
-    // Adjust canvas size to fit the container
-    renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-
-    // Ensure the canvas does not overflow or disrupt the layout
-    renderer.domElement.style.position = "absolute";
-    renderer.domElement.style.top = "0";
-    renderer.domElement.style.left = "0";
-    renderer.domElement.style.width = "100%";
-    renderer.domElement.style.height = "100%";
-
-    // Animation loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-      if (mixer) mixer.update(0.01);
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    // Cleanup
     return () => {
       renderer.dispose();
       avatarRef.current?.removeChild(renderer.domElement);
