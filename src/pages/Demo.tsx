@@ -504,8 +504,10 @@ export default function Demo() {
             </CardHeader>
           </Card>
         )}
+
         <div className="flex flex-col md:flex-row gap-6 flex-grow">
-          <div className="w-full md:w-3/4 bg-white rounded-lg shadow-md flex flex-col">
+          {/* Chat Section */}
+          <div className="w-full md:w-1/2 bg-white rounded-lg shadow-md flex flex-col">
             <Tabs defaultValue="chat" className="flex-grow flex flex-col">
               <div className="border-b px-4">
                 <TabsList className="mt-2">
@@ -548,16 +550,23 @@ export default function Demo() {
               </TabsContent>
             </Tabs>
           </div>
+
+          {/* Animation Section */}
+          <div className="w-full md:w-1/2 flex items-center justify-center bg-white rounded-lg shadow-md">
+            <div
+              className="avatar-wrapper"
+              ref={avatarRef}
+              style={{ width: "200%", height: "500px" }} // Increase height for larger character
+            ></div>
+          </div>
         </div>
 
-        <div className="mb-6">
+        <div className="mt-6">
           <h1 className="text-2xl font-bold">Demo de entrenamiento</h1>
           <p className="text-muted-foreground">
             Interactúa con nuestro asistente para practicar tus habilidades de comunicación.
           </p>
         </div>
-
-        <div className="avatar-wrapper mb-4" ref={avatarRef} style={{ width: "100%", height: "300px" }}></div> {/* Reducir altura de la ventana */}
 
         <div className="flex flex-col gap-6 flex-grow">
           <div className="w-full bg-white rounded-lg shadow-md flex flex-col">
@@ -569,7 +578,7 @@ export default function Demo() {
               </p>
               <Button
                 onClick={startVoiceDemo}
-                className="w-full flex items-center justify-center mb-4" // Mover botón más arriba
+                className="w-full flex items-center justify-center mb-4"
                 disabled={conversation.status === 'connected'}
               >
                 Iniciar demo de voz
