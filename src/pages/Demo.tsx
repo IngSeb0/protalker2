@@ -456,16 +456,20 @@ const animationActiveRef = useRef(false);
         ...prev,
         { type: "bot", content: "Sesión de voz iniciada con ElevenLabs. ¡Puedes hablar ahora!" }
       ]);
-     if (conversation.isSpeaking && conversation.status === 'connected') {
+                const frequencyData = conversation.getOutputByteFrequencyData();
+
+      if (mixer) {
+            mixer.timeScale = 1;
+      }
+     if ((conversation.isSpeaking && conversation.status === 'connected')||frequencyData && frequencyData.some(value => value > 0)) {
     mixer.timeScale = 1;
-    animationActiveRef.current = true;
+   
 
   
 
    
   } else {
     mixer.timeScale = 0;
-    animationActiveRef.current = false;
   }
       incrementSessions();  
 
