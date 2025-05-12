@@ -398,13 +398,7 @@ export default function Demo() {
 
         setMixer(mixer);
 
-        // Iniciar el bucle de animación solo después de cargar la escena
-        const animate = () => {
-          requestAnimationFrame(animate);
-          if (mixer) mixer.update(0.01);
-          renderer.render(scene, camera);
-        };
-        animate();
+        
       },
       undefined,
       (error) => {
@@ -469,14 +463,16 @@ export default function Demo() {
         if (frequencyData) {
           const avgFrequency = frequencyData.reduce((acc, curr) => acc + curr, 0) / frequencyData.length;
 
-          if (avgFrequency > 0) {
-            if (mixer) mixer.update(0.01);
-            renderer.render(scene, camera);
-          }
+         
+          requestAnimationFrame(animate);
+          if (mixer) mixer.update(0.01);
+          renderer.render(scene, camera);
+       
+        animate();
         }
       };
 
-      animate();
+     
     } catch (error) {
       console.error(error);
       toast({
