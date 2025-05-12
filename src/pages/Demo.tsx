@@ -399,8 +399,14 @@ export default function Demo() {
 
         setMixer(mixer);
         renderer.render(scene, camera);
-
-       
+        
+        // Iniciar el bucle de animación solo después de cargar la escena
+        const animate = () => {
+          requestAnimationFrame(animate);
+          if (mixer) mixer.update(0.01);
+          renderer.render(scene, camera);
+        };
+        animate();
       },
       undefined,
       (error) => {
@@ -414,13 +420,15 @@ export default function Demo() {
     };
   }, []);
 
- // Iniciar el bucle de animación solo después de cargar la escena
-        const animate = () => {
-          requestAnimationFrame(animate);
-          if (mixer) mixer.update(0.01);
-          renderer.render(scene, camera);
-        };
-  
+
+  const animate = () => {
+    if (!isAnimating) return; // Detiene el bucle si no debe animarse
+
+    requestAnimationFrame(animate);
+    if (mixer) mixer.update(0.01);
+    renderer.render(scene, camera);
+  };
+
   const startVoiceDemo = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -435,9 +443,9 @@ export default function Demo() {
       ]);
 
       incrementSessions();
-animate();
-      
-      
+
+      setIsAnimating(true); // Activa la animación
+      animate();
     } catch (error) {
       console.error(error);
       toast({
