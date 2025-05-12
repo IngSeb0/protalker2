@@ -409,15 +409,14 @@ export default function Demo() {
          const checkFrequencyAndAnimate = () => {
           const frequencyData = conversation.getOutputByteFrequencyData();
           if (frequencyData) {
-            const avgFrequency = frequencyData.reduce((acc, curr) => acc + curr, 0) / frequencyData.length;
-            if (avgFrequency > 0) {
+            
               setIsAnimating(true);
               animate();
             } else {
               requestAnimationFrame(checkFrequencyAndAnimate);
             }
           }
-        };
+        
 
         checkFrequencyAndAnimate();
 
