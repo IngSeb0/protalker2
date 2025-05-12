@@ -410,12 +410,12 @@ export default function Demo() {
         };
          const checkFrequencyAndAnimate = () => {
           const frequencyData = conversation.getOutputByteFrequencyData();
-          if (frequencyData) {
+          if (frequencyData && frequencyData.some(value => value > 0)) {
 
            
               setIsAnimating(true);
               animate();
-               if (mixer.timeScale === 0) {
+               if (mixer) {
               mixer.timeScale = 1;
            
             }} else {
