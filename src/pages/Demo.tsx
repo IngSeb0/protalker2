@@ -446,7 +446,7 @@ export default function Demo() {
       updateMouthShape();
     }
   }, [mixer, scene]);
-
+renderer.render(scene, camera);
   const animate = () => {
     if (!isAnimating) return; // Detiene el bucle si no debe animarse
 
