@@ -401,6 +401,7 @@ export default function Demo() {
 
         setMixer(mixer);
         renderer.render(scene, camera);
+        mixer.timeScale = 0;
         
         // Iniciar el bucle de animación solo después de cargar la escena
         const animate = () => {
@@ -454,7 +455,7 @@ export default function Demo() {
       ]);
 
       incrementSessions();
-mixer.timeScale = 1;
+
       setIsAnimating(true); // Activa la animación
     } catch (error) {
       console.error(error);
