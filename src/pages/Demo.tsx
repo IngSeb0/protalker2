@@ -489,14 +489,17 @@ const animationActiveRef = useRef(false);
     navigate('/');
   };
 useEffect(() => {
+  if (!mixer || !scene) return;
 
   if (conversation.isSpeaking) {
     mixer.timeScale = 1;
+    animationActiveRef.current = true;
 
     
     
   } else {
     mixer.timeScale = 0;
+    animationActiveRef.current = false;
   }
 }, [conversation.isSpeaking, mixer, scene]);
   if (loading) {
