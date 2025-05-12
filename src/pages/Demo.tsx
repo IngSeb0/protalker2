@@ -444,18 +444,13 @@ const animationActiveRef = useRef(false);
 useEffect(() => {
   if (!mixer || !scene) return;
 
-  if (conversation.isSpeaking) {
+  if (conversation.isSpeaking && conversation.status === 'connected') {
     mixer.timeScale = 1;
     animationActiveRef.current = true;
 
-    const animate = () => {
-      if (!animationActiveRef.current) return; // Detener animación
-      requestAnimationFrame(animate);
-      mixer.update(0.01);
-      renderer.render(scene, camera);
-    };
+  
 
-    animate();
+   
   } else {
     mixer.timeScale = 0;
     animationActiveRef.current = false;
@@ -493,9 +488,7 @@ useEffect(() => {
   const stopVoiceDemo = async () => {
   await conversation.endSession();
 
-  if (mixer) {
-    mixer.timeScale = 0;
-  }
+
 
   setIsPopupVisible(true);
 };
