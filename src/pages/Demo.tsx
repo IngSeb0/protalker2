@@ -15,7 +15,7 @@ import { Bot, User } from "lucide-react";
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
 const BASE_API_URL = "http://localhost:5000";
-let camera: THREE.PerspectiveCamera;
+  let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
 interface Badge {
   id: string;
@@ -36,7 +36,6 @@ export default function Demo() {
   const avatarRef = useRef<HTMLDivElement | null>(null);
   const [scene, setScene] = useState<THREE.Scene | null>(null);
   const [mixer, setMixer] = useState<THREE.AnimationMixer | null>(null);
-  const [isAnimating, setIsAnimating] = useState(false); // Estado para controlar la animación
 
   const [completedSessions, setCompletedSessions] = useState(() => {
     const saved = localStorage.getItem('completedSessions');
@@ -311,8 +310,38 @@ export default function Demo() {
         audioContextRef.current = new AudioContext();
       }
     
+      const source = audioContextRef.current.createMediaStreamSource(audioStream);
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      source.connect(analyserRef.current);
     
-      
+      const updateMouthShape = () => {
+        if (!analyserRef.current) return;
+    
+        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+        analyserRef.current.getByteFrequencyData(dataArray);
+    
+        const avgFrequency = dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
+    
+        // Mapear frecuencias a formas de la boca
+        if (avgFrequency > 200) {
+          setMouthShape("open");
+        } else if (avgFrequency > 150) {
+          setMouthShape("o");
+        } else if (avgFrequency > 100) {
+          setMouthShape("e");
+        } else if (avgFrequency > 75) {
+          setMouthShape("mbp");
+        } else if (avgFrequency > 50) {
+          setMouthShape("f");
+        } else if (avgFrequency > 25) {
+          setMouthShape("th");
+        } else {
+          setMouthShape("rest");
+        }
+    
+        requestAnimationFrame(updateMouthShape);
+      };
+      updateMouthShape();
     },
     onConnect: () => {
       toast({
@@ -335,7 +364,8 @@ export default function Demo() {
       });
     },
   });
-useEffect(() => {
+
+  useEffect(() => {
     if (!avatarRef.current) return;
 
     const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
@@ -374,7 +404,7 @@ useEffect(() => {
           if (mixer) mixer.update(0.01);
           renderer.render(scene, camera);
         };
-      
+        animate();
       },
       undefined,
       (error) => {
@@ -388,6 +418,34 @@ useEffect(() => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!mixer) return;
+
+    const model = scene?.children.find((child) => child.name === "InterviewModel");
+    if (model && "morphTargetInfluences" in model) {
+      const influences = model.morphTargetInfluences;
+
+      const updateMouthShape = () => {
+        if (!analyserRef.current) return;
+
+        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+        analyserRef.current.getByteFrequencyData(dataArray);
+
+        const avgFrequency = dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
+
+        // Map frequencies to mouth shapes
+        if (avgFrequency > 200) {
+          influences[0] = 1; // Open mouth
+        } else {
+          influences[0] = 0; // Rest position
+        }
+
+        requestAnimationFrame(updateMouthShape);
+      };
+
+      updateMouthShape();
+    }
+  }, [mixer, scene]);
 
   const startVoiceDemo = async () => {
     try {
@@ -405,17 +463,14 @@ useEffect(() => {
       incrementSessions();
 
       const animate = () => {
-        if (!mixer || !scene) return;
+        requestAnimationFrame(animate);
 
         const frequencyData = conversation.getOutputByteFrequencyData();
         if (frequencyData) {
           const avgFrequency = frequencyData.reduce((acc, curr) => acc + curr, 0) / frequencyData.length;
 
           if (avgFrequency > 0) {
-            requestAnimationFrame(animate);
-            mixer.update(0.01);
-            const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            if (mixer) mixer.update(0.01);
             renderer.render(scene, camera);
           }
         }
@@ -435,10 +490,8 @@ useEffect(() => {
   const stopVoiceDemo = async () => {
     await conversation.endSession();
 
-    setIsAnimating(false); // Detener la animación
-
     if (mixer) {
-      mixer.timeScale = 0; // Pausar la animación
+      mixer.timeScale = 0; // Pause animation
     }
   };
 
