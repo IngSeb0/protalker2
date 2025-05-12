@@ -504,7 +504,16 @@ export default function Demo() {
             </CardHeader>
           </Card>
         )}
-  <TabsContent value="chat" className="flex-grow flex flex-col p-4">
+        <div className="flex flex-col md:flex-row gap-6 flex-grow">
+          <div className="w-full md:w-3/4 bg-white rounded-lg shadow-md flex flex-col">
+            <Tabs defaultValue="chat" className="flex-grow flex flex-col">
+              <div className="border-b px-4">
+                <TabsList className="mt-2">
+                  <TabsTrigger value="chat">Chat</TabsTrigger>
+                </TabsList>
+              </div>
+
+              <TabsContent value="chat" className="flex-grow flex flex-col p-4">
                 <div
                   ref={chatContainerRef}
                   className="flex-grow overflow-y-auto mb-4 space-y-4"
@@ -537,6 +546,10 @@ export default function Demo() {
                   ))}
                 </div>
               </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Demo de entrenamiento</h1>
           <p className="text-muted-foreground">
