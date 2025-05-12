@@ -489,7 +489,7 @@ const animationActiveRef = useRef(false);
     navigate('/');
   };
 useEffect(() => {
-  if (!mixer || !scene) return;
+  if (mixer){
 
   if (conversation.isSpeaking) {
     mixer.timeScale = 1;
@@ -500,7 +500,8 @@ useEffect(() => {
   } else {
     mixer.timeScale = 0;
     animationActiveRef.current = false;
-  }
+  }}
+  
 }, [conversation.isSpeaking, mixer, scene]);
   if (loading) {
     return (
