@@ -383,7 +383,7 @@ export default function Demo() {
 
     const loader = new GLTFLoader();
     loader.load(
-      "lovable-uploads/scene.gltf",
+      "lovable-uploads/scene_converted.gltf", // Updated to use the converted GLTF file
       (gltf) => {
         const loadedScene = gltf.scene;
         loadedScene.name = "CompleteScene";
