@@ -556,7 +556,7 @@ export default function Demo() {
             <div
               className="avatar-wrapper"
               ref={avatarRef}
-              style={{ width: "200%", height: "500px" }} // Increase height for larger character
+              style={{ width: "400%", height: "500px" }} // Increase height for larger character
             ></div>
           </div>
         </div>
@@ -598,7 +598,66 @@ export default function Demo() {
               </div>
             </div>
           </div>
+  <div className="bg-white rounded-lg shadow-md p-4">
+              <h3 className="font-medium mb-3">Tu progreso</h3>
+              <div className="space-y-3">
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span>Sesiones completadas</span>
+                    <span className="font-medium">{completedSessions}/10</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-primary h-2 rounded-full"
+                      style={{
+                        width: `${Math.min(100, (completedSessions / 10) * 100)}%`,
+                      }}
+                    ></div>
+                  </div>
+                </div>
 
+                <div className="pt-2">
+                  <p className="text-sm text-muted-foreground mb-2">Tus insignias:</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    {badges
+                      .filter((b) => b.achieved)
+                      .map((badge) => (
+                        <div
+                          key={badge.id}
+                          className="flex flex-col items-center p-3 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg cursor-pointer hover:shadow-md transition-all"
+                          onClick={() => shareBadge(badge)}
+                          title="Haz clic para compartir"
+                        >
+                          <span className="text-2xl mb-1">{badge.image}</span>
+                          <span className="text-xs font-medium text-center">
+                            {badge.title}
+                          </span>
+                          <span className="text-xs text-muted-foreground text-center">
+                            {badge.description}
+                          </span>
+                        </div>
+                      ))}
+
+                    {badges
+                      .filter((b) => !b.achieved)
+                      .map((badge) => (
+                        <div
+                          key={badge.id}
+                          className="flex flex-col items-center p-3 bg-gray-100 rounded-lg opacity-50"
+                        >
+                          <span className="text-2xl mb-1">🔒</span>
+                          <span className="text-xs font-medium text-center">
+                            {badge.title}
+                          </span>
+                          <span className="text-xs text-muted-foreground text-center">
+                            {badge.description}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           <div className="mt-4 flex flex-col gap-2">
             <Button
               variant="outline"
