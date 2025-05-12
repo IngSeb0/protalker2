@@ -401,7 +401,8 @@ export default function Demo() {
 
         setMixer(mixer);
         renderer.render(scene, camera);
-        mixer.timeScale = 0;
+       
+        
         
         // Iniciar el bucle de animación solo después de cargar la escena
         const animate = () => {
@@ -412,15 +413,17 @@ export default function Demo() {
          const checkFrequencyAndAnimate = () => {
           const frequencyData = conversation.getOutputByteFrequencyData();
           if (frequencyData) {
-            mixer.timeScale = 1;
+            
               setIsAnimating(true);
               animate();
-            } else {
+              if (mixer.timeScale === 0) {
+              mixer.timeScale = 1;
+            } if (frequencyData.length === 0) { 
               
               mixer.timeScale = 0;
             }
           }
-        
+         }
 
         checkFrequencyAndAnimate();
 
