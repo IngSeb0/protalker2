@@ -370,7 +370,7 @@ export default function Demo() {
     if (!avatarRef.current) return;
 
     const cameraInstance = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
-    cameraInstance.position.set(0, 1.6, 1.2); // Acercar la cámara
+    cameraInstance.position.set(0, 2, 2); // Acercar la cámara
     camera = cameraInstance;
 
     const rendererInstance = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -505,6 +505,43 @@ export default function Demo() {
           </Card>
         )}
 
+        <div className="mt-6">
+          <h1 className="text-2xl font-bold">Demo de entrenamiento</h1>
+          <p className="text-muted-foreground">
+            Interactúa con nuestro asistente para practicar tus habilidades de comunicación.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-6 flex-grow">
+          <div className="w-full bg-white rounded-lg shadow-md flex flex-col">
+            <div className="bg-white rounded-lg shadow-md p-4">
+              <h3 className="font-medium mb-3">Demo de voz con ElevenLabs</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Inicia el demo para interactuar con el asistente utilizando voz
+                (powered by ElevenLabs)
+              </p>
+              <Button
+                onClick={startVoiceDemo}
+                className="w-full flex items-center justify-center mb-4"
+                disabled={conversation.status === 'connected'}
+              >
+                Iniciar demo de voz
+              </Button>
+
+              <Button
+                onClick={stopVoiceDemo}
+                className="w-full flex items-center justify-center bg-red-600 text-white hover:bg-red-700"
+                disabled={conversation.status !== 'connected'}
+              >
+                Detener demo de voz
+              </Button>
+
+              <div className="text-xs text-muted-foreground mt-2 text-center">
+                Estado: <strong>{conversation.status}</strong> — Agente está:{' '}
+                <strong>{conversation.isSpeaking ? 'Hablando' : 'Escuchando'}</strong>
+              </div>
+            </div>
+          </div>
         <div className="flex flex-col md:flex-row gap-6 flex-grow">
           {/* Chat Section */}
           <div className="w-full md:w-1/2 bg-white rounded-lg shadow-md flex flex-col">
@@ -561,43 +598,6 @@ export default function Demo() {
           </div>
         </div>
 
-        <div className="mt-6">
-          <h1 className="text-2xl font-bold">Demo de entrenamiento</h1>
-          <p className="text-muted-foreground">
-            Interactúa con nuestro asistente para practicar tus habilidades de comunicación.
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-6 flex-grow">
-          <div className="w-full bg-white rounded-lg shadow-md flex flex-col">
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <h3 className="font-medium mb-3">Demo de voz con ElevenLabs</h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                Inicia el demo para interactuar con el asistente utilizando voz
-                (powered by ElevenLabs)
-              </p>
-              <Button
-                onClick={startVoiceDemo}
-                className="w-full flex items-center justify-center mb-4"
-                disabled={conversation.status === 'connected'}
-              >
-                Iniciar demo de voz
-              </Button>
-
-              <Button
-                onClick={stopVoiceDemo}
-                className="w-full flex items-center justify-center bg-red-600 text-white hover:bg-red-700"
-                disabled={conversation.status !== 'connected'}
-              >
-                Detener demo de voz
-              </Button>
-
-              <div className="text-xs text-muted-foreground mt-2 text-center">
-                Estado: <strong>{conversation.status}</strong> — Agente está:{' '}
-                <strong>{conversation.isSpeaking ? 'Hablando' : 'Escuchando'}</strong>
-              </div>
-            </div>
-          </div>
   <div className="bg-white rounded-lg shadow-md p-4">
               <h3 className="font-medium mb-3">Tu progreso</h3>
               <div className="space-y-3">
