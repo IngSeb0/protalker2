@@ -15,8 +15,11 @@ import { Bot, User } from "lucide-react";
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
 const BASE_API_URL = "http://localhost:5000";
-  let camera: THREE.PerspectiveCamera;
-let renderer: THREE.WebGLRenderer;
+let camera: THREE.PerspectiveCamera | null = null;
+let renderer: THREE.WebGLRenderer | null = null;
+let scene: THREE.Scene | null = null;
+let mixer: THREE.AnimationMixer | null = null;
+
 interface Badge {
   id: string;
   title: string;
@@ -34,8 +37,6 @@ export default function Demo() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const avatarRef = useRef<HTMLDivElement | null>(null);
-  const [scene, setScene] = useState<THREE.Scene | null>(null);
-  const [mixer, setMixer] = useState<THREE.AnimationMixer | null>(null);
   const [isAnimating, setIsAnimating] = useState(false); // Controla si la animación está activa
 
   const [completedSessions, setCompletedSessions] = useState(() => {
@@ -366,47 +367,50 @@ export default function Demo() {
     },
   });
 
+  const animate = () => {
+    if (!isAnimating || !mixer || !scene || !camera || !renderer) return;
+
+    requestAnimationFrame(animate);
+    mixer.update(0.01);
+    renderer.render(scene, camera);
+  };
+
   useEffect(() => {
     if (!avatarRef.current) return;
 
-    const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
-    camera.position.set(0, 1.6, 1.8);
+    const cameraInstance = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
+    cameraInstance.position.set(0, 1.6, 1.8);
+    camera = cameraInstance;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    avatarRef.current.appendChild(renderer.domElement);
+    const rendererInstance = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    rendererInstance.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
+    rendererInstance.setPixelRatio(window.devicePixelRatio);
+    avatarRef.current.appendChild(rendererInstance.domElement);
+    renderer = rendererInstance;
 
-    const scene = new THREE.Scene();
+    const sceneInstance = new THREE.Scene();
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
     directionalLight.position.set(0, 2, 2);
-    scene.add(ambientLight, directionalLight);
+    sceneInstance.add(ambientLight, directionalLight);
+    scene = sceneInstance;
 
     const loader = new GLTFLoader();
     loader.load(
-      "lovable-uploads/scene_converted.gltf", // Updated to use the optimized GLTF file
+      "lovable-uploads/scene_converted.gltf",
       (gltf) => {
         const loadedScene = gltf.scene;
         loadedScene.name = "CompleteScene";
-        scene.add(loadedScene);
+        sceneInstance.add(loadedScene);
 
-        const mixer = new THREE.AnimationMixer(loadedScene);
+        const mixerInstance = new THREE.AnimationMixer(loadedScene);
         if (gltf.animations.length > 0) {
-          const action = mixer.clipAction(gltf.animations[0]);
+          const action = mixerInstance.clipAction(gltf.animations[0]);
           action.play();
         }
 
-        setMixer(mixer);
-        renderer.render(scene, camera);
-        
-        // Iniciar el bucle de animación solo después de cargar la escena
-        const animate = () => {
-          requestAnimationFrame(animate);
-          if (mixer) mixer.update(0.01);
-          renderer.render(scene, camera);
-        };
-        animate();
+        mixer = mixerInstance;
+        rendererInstance.render(sceneInstance, cameraInstance);
       },
       undefined,
       (error) => {
@@ -415,19 +419,10 @@ export default function Demo() {
     );
 
     return () => {
-      renderer.dispose();
-      avatarRef.current?.removeChild(renderer.domElement);
+      rendererInstance.dispose();
+      avatarRef.current?.removeChild(rendererInstance.domElement);
     };
   }, []);
-
-
-  const animate = () => {
-    if (!isAnimating) return; // Detiene el bucle si no debe animarse
-
-    requestAnimationFrame(animate);
-    if (mixer) mixer.update(0.01);
-    renderer.render(scene, camera);
-  };
 
   const startVoiceDemo = async () => {
     try {
