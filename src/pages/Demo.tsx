@@ -415,12 +415,11 @@ export default function Demo() {
            
               setIsAnimating(true);
               animate();
-               if (mixer) {
-              mixer.timeScale = 1;
+              
            
-            }} else {
+            } else {
               requestAnimationFrame(checkFrequencyAndAnimate);
-              mixer.timeScale = 0;
+              
             }
           }
         
@@ -442,6 +441,26 @@ export default function Demo() {
     };
   }, []);
 
+useEffect(() => {
+  if (!mixer) return;
+
+  if (conversation.isSpeaking) {
+    // Reanuda la animación
+    mixer.timeScale = 1;
+
+    const animate = () => {
+      if (!conversation.isSpeaking) return; // Detener el loop si ya no está hablando
+      requestAnimationFrame(animate);
+      mixer.update(0.01);
+      renderer.render(scene!, camera);
+    };
+
+    animate();
+  } else {
+    // Pausa la animación
+    mixer.timeScale = 0;
+  }
+}, [conversation.isSpeaking, mixer]);
 
   
   const startVoiceDemo = async () => {
