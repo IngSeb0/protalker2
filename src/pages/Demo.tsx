@@ -15,11 +15,8 @@ import { Bot, User } from "lucide-react";
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
 const BASE_API_URL = "http://localhost:5000";
-let camera: THREE.PerspectiveCamera | null = null;
-let renderer: THREE.WebGLRenderer | null = null;
-let scene: THREE.Scene | null = null;
-let mixer: THREE.AnimationMixer | null = null;
-
+  let camera: THREE.PerspectiveCamera;
+let renderer: THREE.WebGLRenderer;
 interface Badge {
   id: string;
   title: string;
@@ -37,6 +34,8 @@ export default function Demo() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const avatarRef = useRef<HTMLDivElement | null>(null);
+  const [scene, setScene] = useState<THREE.Scene | null>(null);
+  const [mixer, setMixer] = useState<THREE.AnimationMixer | null>(null);
   const [isAnimating, setIsAnimating] = useState(false); // Controla si la animación está activa
 
   const [completedSessions, setCompletedSessions] = useState(() => {
@@ -367,51 +366,64 @@ export default function Demo() {
     },
   });
 
-  const animate = () => {
-    if (!isAnimating || !mixer || !scene || !camera || !renderer) return;
-
-    requestAnimationFrame(animate);
-    mixer.update(0.01);
-    renderer.render(scene, camera);
-  };
-
   useEffect(() => {
     if (!avatarRef.current) return;
 
-    const cameraInstance = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
-    cameraInstance.position.set(0, 1.6, 1.8);
-    camera = cameraInstance;
+    const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
+    camera.position.set(0, 1.6, 1.8);
 
-    const rendererInstance = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    rendererInstance.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
-    rendererInstance.setPixelRatio(window.devicePixelRatio);
-    avatarRef.current.appendChild(rendererInstance.domElement);
-    renderer = rendererInstance;
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    avatarRef.current.appendChild(renderer.domElement);
 
-    const sceneInstance = new THREE.Scene();
+    const scene = new THREE.Scene();
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
     directionalLight.position.set(0, 2, 2);
-    sceneInstance.add(ambientLight, directionalLight);
-    scene = sceneInstance;
+    scene.add(ambientLight, directionalLight);
 
     const loader = new GLTFLoader();
     loader.load(
-      "lovable-uploads/scene_converted.gltf",
+      "lovable-uploads/scene_converted.gltf", // Updated to use the optimized GLTF file
       (gltf) => {
         const loadedScene = gltf.scene;
         loadedScene.name = "CompleteScene";
-        sceneInstance.add(loadedScene);
+        scene.add(loadedScene);
 
-        const mixerInstance = new THREE.AnimationMixer(loadedScene);
+        const mixer = new THREE.AnimationMixer(loadedScene);
         if (gltf.animations.length > 0) {
-          const action = mixerInstance.clipAction(gltf.animations[0]);
+          const action = mixer.clipAction(gltf.animations[0]);
           action.play();
         }
 
-        mixer = mixerInstance;
-        rendererInstance.render(sceneInstance, cameraInstance);
+        setMixer(mixer);
+        renderer.render(scene, camera);
+        
+        // Iniciar el bucle de animación solo después de cargar la escena
+        const animate = () => {
+          requestAnimationFrame(animate);
+          if (mixer) mixer.update(0.01);
+          renderer.render(scene, camera);
+        };
+         const checkFrequencyAndAnimate = () => {
+          const frequencyData = conversation.getOutputByteFrequencyData();
+          if (frequencyData) {
+            const avgFrequency = frequencyData.reduce((acc, curr) => acc + curr, 0) / frequencyData.length;
+            if (avgFrequency > 0) {
+              setIsAnimating(true);
+              animate();
+            } else {
+              requestAnimationFrame(checkFrequencyAndAnimate);
+            }
+          }
+        };
+
+        checkFrequencyAndAnimate();
+
       },
+       
+    
       undefined,
       (error) => {
         console.error("Error al cargar la escena GLTF:", error);
@@ -419,11 +431,13 @@ export default function Demo() {
     );
 
     return () => {
-      rendererInstance.dispose();
-      avatarRef.current?.removeChild(rendererInstance.domElement);
+      renderer.dispose();
+      avatarRef.current?.removeChild(renderer.domElement);
     };
   }, []);
 
+
+  
   const startVoiceDemo = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -440,7 +454,6 @@ export default function Demo() {
       incrementSessions();
 
       setIsAnimating(true); // Activa la animación
-      animate();
     } catch (error) {
       console.error(error);
       toast({
