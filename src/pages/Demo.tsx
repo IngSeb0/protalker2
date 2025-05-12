@@ -370,7 +370,7 @@ export default function Demo() {
     if (!avatarRef.current) return;
 
     const cameraInstance = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
-    cameraInstance.position.set(0, 1.6, 1); // Acercar la cámara
+    cameraInstance.position.set(0, 1.6, 0.8); // Acercar la cámara
     camera = cameraInstance;
 
     const rendererInstance = new THREE.WebGLRenderer({ antialias: true, alpha: true });
