@@ -450,27 +450,14 @@ const animationActiveRef = useRef(false);
       await conversation.startSession({
         agentId: 'P1ORnc1dGjU8sp1tdcOu',
       });
-     
 
       setMessages(prev => [
         ...prev,
         { type: "bot", content: "Sesión de voz iniciada con ElevenLabs. ¡Puedes hablar ahora!" }
       ]);
-                const frequencyData = conversation.getOutputByteFrequencyData();
-
       if (mixer) {
-            mixer.timeScale = 1;
-      }
-     if ((conversation.isSpeaking && conversation.status === 'connected')||frequencyData && frequencyData.some(value => value > 0)) {
-    mixer.timeScale = 1;
-   
-
-  
-
-   
-  } else {
-    mixer.timeScale = 0;
-  }
+      mixer.timeScale=1;
+    }
       incrementSessions();  
 
       setIsAnimating(true); // Activa la animación
