@@ -398,17 +398,6 @@ export default function Demo() {
 
         setMixer(mixer);
 
-        // Iniciar el bucle de animación solo después de cargar la escena
-        const animate = () => {
-          requestAnimationFrame(animate);
-          if (mixer) mixer.update(0.01);
-          renderer.render(scene, camera);
-        };
-        animate();
-      },
-      undefined,
-      (error) => {
-        console.error("Error al cargar la escena GLTF:", error);
       }
     );
 
