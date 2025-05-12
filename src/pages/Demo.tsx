@@ -15,7 +15,8 @@ import { Bot, User } from "lucide-react";
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
 const BASE_API_URL = "http://localhost:5000";
-  
+  let camera: THREE.PerspectiveCamera;
+let renderer: THREE.WebGLRenderer;
 interface Badge {
   id: string;
   title: string;
@@ -461,9 +462,21 @@ export default function Demo() {
 
       incrementSessions();
 
-      if (mixer) {
-        mixer.timeScale = 1; // Resume animation
-      }
+      const animate = () => {
+        requestAnimationFrame(animate);
+
+        const frequencyData = conversation.getOutputByteFrequencyData();
+        if (frequencyData) {
+          const avgFrequency = frequencyData.reduce((acc, curr) => acc + curr, 0) / frequencyData.length;
+
+          if (avgFrequency > 0) {
+            if (mixer) mixer.update(0.01);
+            renderer.render(scene, camera);
+          }
+        }
+      };
+
+      animate();
     } catch (error) {
       console.error(error);
       toast({
