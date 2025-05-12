@@ -36,6 +36,7 @@ export default function Demo() {
   const avatarRef = useRef<HTMLDivElement | null>(null);
   const [scene, setScene] = useState<THREE.Scene | null>(null);
   const [mixer, setMixer] = useState<THREE.AnimationMixer | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false); // Controla si la animación está activa
 
   const [completedSessions, setCompletedSessions] = useState(() => {
     const saved = localStorage.getItem('completedSessions');
@@ -398,7 +399,13 @@ export default function Demo() {
 
         setMixer(mixer);
 
-        
+        // Iniciar el bucle de animación solo después de cargar la escena
+        const animate = () => {
+          requestAnimationFrame(animate);
+          if (mixer) mixer.update(0.01);
+          renderer.render(scene, camera);
+        };
+        animate();
       },
       undefined,
       (error) => {
@@ -441,6 +448,14 @@ export default function Demo() {
     }
   }, [mixer, scene]);
 
+  const animate = () => {
+    if (!isAnimating) return; // Detiene el bucle si no debe animarse
+
+    requestAnimationFrame(animate);
+    if (mixer) mixer.update(0.01);
+    renderer.render(scene, camera);
+  };
+
   const startVoiceDemo = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -456,23 +471,8 @@ export default function Demo() {
 
       incrementSessions();
 
-      const animate = () => {
-        requestAnimationFrame(animate);
-
-        const frequencyData = conversation.getOutputByteFrequencyData();
-        if (frequencyData) {
-          const avgFrequency = frequencyData.reduce((acc, curr) => acc + curr, 0) / frequencyData.length;
-
-         
-          requestAnimationFrame(animate);
-          if (mixer) mixer.update(0.01);
-          renderer.render(scene, camera);
-       
-        animate();
-        }
-      };
-
-     
+      setIsAnimating(true); // Activa la animación
+      animate();
     } catch (error) {
       console.error(error);
       toast({
@@ -486,8 +486,10 @@ export default function Demo() {
   const stopVoiceDemo = async () => {
     await conversation.endSession();
 
+    setIsAnimating(false); // Detiene la animación
+
     if (mixer) {
-      mixer.timeScale = 0; // Pause animation
+      mixer.timeScale = 0; // Pausa la animación
     }
   };
 
