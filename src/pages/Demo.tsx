@@ -412,13 +412,14 @@ const animationActiveRef = useRef(false);
          const checkFrequencyAndAnimate = () => {
           const frequencyData = conversation.getOutputByteFrequencyData();
           if (frequencyData && frequencyData.some(value => value > 0)) {
-
+             mixer.timeScale=1;
            
               setIsAnimating(true);
               animate();
               
            
             } else {
+               mixer.timeScale=0;
               requestAnimationFrame(checkFrequencyAndAnimate);
               
             }
@@ -469,8 +470,10 @@ useEffect(() => {
         ...prev,
         { type: "bot", content: "Sesión de voz iniciada con ElevenLabs. ¡Puedes hablar ahora!" }
       ]);
-
-      incrementSessions();
+      if (mixer) {
+      mixer.timeScale=1;
+    }
+      incrementSessions();  
 
       setIsAnimating(true); // Activa la animación
     } catch (error) {
@@ -487,9 +490,11 @@ useEffect(() => {
 
   const stopVoiceDemo = async () => {
   await conversation.endSession();
+    
 
-
-
+    if (mixer) {
+      mixer.timeScale=0;
+    }
   setIsPopupVisible(true);
 };
   const handleLogout = async () => {
@@ -719,11 +724,10 @@ useEffect(() => {
             >
               Compartir ProTalker
             </Button>
+            
+            </div>
           </div>
-                     </div>
-                   </div>
-               
-               {isPopupVisible && (
+          {isPopupVisible && (
                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                    <div className="w-full max-w-sm md:max-w-md lg:max-w-lg bg-white rounded-xl shadow-xl p-6 text-center">
                      <h2 className="text-xl font-bold mb-2">¿Te gustó la demo?</h2>
@@ -743,7 +747,7 @@ useEffect(() => {
                    </div>
                  </div>
                )}
-             </main>
-           </div>
-           );
-         }
+      </main>
+    </div>
+  );
+  }
