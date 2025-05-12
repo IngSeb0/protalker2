@@ -15,7 +15,7 @@ import { Bot, User } from "lucide-react";
 // Define API URL constants
 const OPENAI_API_URL = "http://localhost:5000";
 const BASE_API_URL = "http://localhost:5000";
-  let camera: THREE.PerspectiveCamera;
+let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
 interface Badge {
   id: string;
@@ -36,6 +36,7 @@ export default function Demo() {
   const avatarRef = useRef<HTMLDivElement | null>(null);
   const [scene, setScene] = useState<THREE.Scene | null>(null);
   const [mixer, setMixer] = useState<THREE.AnimationMixer | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false); // Estado para controlar la animación
 
   const [completedSessions, setCompletedSessions] = useState(() => {
     const saved = localStorage.getItem('completedSessions');
@@ -372,7 +373,7 @@ export default function Demo() {
     camera.position.set(0, 1.6, 1.8);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
+    renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight); // Fixed argument mismatch
     renderer.setPixelRatio(window.devicePixelRatio);
     avatarRef.current.appendChild(renderer.domElement);
 
@@ -397,7 +398,13 @@ export default function Demo() {
         }
 
         setMixer(mixer);
+        setScene(scene);
 
+        // Do not start animation loop here
+      },
+      undefined,
+      (error) => {
+        console.error("Error al cargar la escena GLTF:", error);
       }
     );
 
@@ -406,35 +413,6 @@ export default function Demo() {
       avatarRef.current?.removeChild(renderer.domElement);
     };
   }, []);
-
-  useEffect(() => {
-    if (!mixer) return;
-
-    const model = scene?.children.find((child) => child.name === "InterviewModel");
-    if (model && "morphTargetInfluences" in model) {
-      const influences = model.morphTargetInfluences;
-
-      const updateMouthShape = () => {
-        if (!analyserRef.current) return;
-
-        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-        analyserRef.current.getByteFrequencyData(dataArray);
-
-        const avgFrequency = dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
-
-        // Map frequencies to mouth shapes
-        if (avgFrequency > 200) {
-          influences[0] = 1; // Open mouth
-        } else {
-          influences[0] = 0; // Rest position
-        }
-
-        requestAnimationFrame(updateMouthShape);
-      };
-
-      updateMouthShape();
-    }
-  }, [mixer, scene]);
 
   const startVoiceDemo = async () => {
     try {
@@ -452,14 +430,17 @@ export default function Demo() {
       incrementSessions();
 
       const animate = () => {
-        requestAnimationFrame(animate);
+        if (!mixer || !scene) return;
 
         const frequencyData = conversation.getOutputByteFrequencyData();
         if (frequencyData) {
           const avgFrequency = frequencyData.reduce((acc, curr) => acc + curr, 0) / frequencyData.length;
 
           if (avgFrequency > 0) {
-            if (mixer) mixer.update(0.01);
+            requestAnimationFrame(animate);
+            mixer.update(0.01);
+            const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.render(scene, camera);
           }
         }
@@ -479,8 +460,10 @@ export default function Demo() {
   const stopVoiceDemo = async () => {
     await conversation.endSession();
 
+    setIsAnimating(false); // Detener la animación
+
     if (mixer) {
-      mixer.timeScale = 0; // Pause animation
+      mixer.timeScale = 0; // Pausar la animación
     }
   };
 
@@ -628,7 +611,7 @@ export default function Demo() {
           </div>
 
           <div className="w-full md:w-1/4 space-y-4">
-            <div className="bg-white rounded-lg shadow-md p-4"></div>
+            <div className="bg-white rounded-lg shadow-md p-4">
               <h3 className="font-medium mb-3">Escenarios disponibles</h3>
               <ul className="space-y-2">
                 <li>
@@ -819,7 +802,7 @@ export default function Demo() {
               </div>
             </div>
           </div>
-      
+        </div>
       </main>
     </div>
   );
