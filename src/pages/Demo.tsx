@@ -458,6 +458,12 @@ const animationActiveRef = useRef(false);
       if (mixer) {
       mixer.timeScale=1;
     }
+    if (!conversation.isSpeaking) {
+      mixer.timeScale=0;
+    }
+      if (conversation.isSpeaking && conversation.status === 'connected') {
+      mixer.timeScale=1;
+    }
       incrementSessions();  
 
       setIsAnimating(true); // Activa la animación
