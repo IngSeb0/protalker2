@@ -405,7 +405,6 @@ export default function Demo() {
           if (mixer) mixer.update(0.01);
           renderer.render(scene, camera);
         };
-        animate();
       },
       undefined,
       (error) => {
