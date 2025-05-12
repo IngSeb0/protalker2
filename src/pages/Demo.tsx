@@ -311,38 +311,8 @@ export default function Demo() {
         audioContextRef.current = new AudioContext();
       }
     
-      const source = audioContextRef.current.createMediaStreamSource(audioStream);
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      source.connect(analyserRef.current);
     
-      const updateMouthShape = () => {
-        if (!analyserRef.current) return;
-    
-        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-        analyserRef.current.getByteFrequencyData(dataArray);
-    
-        const avgFrequency = dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
-    
-        // Mapear frecuencias a formas de la boca
-        if (avgFrequency > 200) {
-          setMouthShape("open");
-        } else if (avgFrequency > 150) {
-          setMouthShape("o");
-        } else if (avgFrequency > 100) {
-          setMouthShape("e");
-        } else if (avgFrequency > 75) {
-          setMouthShape("mbp");
-        } else if (avgFrequency > 50) {
-          setMouthShape("f");
-        } else if (avgFrequency > 25) {
-          setMouthShape("th");
-        } else {
-          setMouthShape("rest");
-        }
-    
-        requestAnimationFrame(updateMouthShape);
-      };
-      updateMouthShape();
+      
     },
     onConnect: () => {
       toast({
@@ -365,15 +335,14 @@ export default function Demo() {
       });
     },
   });
-
-  useEffect(() => {
+useEffect(() => {
     if (!avatarRef.current) return;
 
     const camera = new THREE.PerspectiveCamera(75, avatarRef.current.clientWidth / avatarRef.current.clientHeight, 0.1, 1000);
     camera.position.set(0, 1.6, 1.8);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight); // Fixed argument mismatch
+    renderer.setSize(avatarRef.current.clientWidth, avatarRef.current.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     avatarRef.current.appendChild(renderer.domElement);
 
@@ -398,9 +367,14 @@ export default function Demo() {
         }
 
         setMixer(mixer);
-        setScene(scene);
 
-        // Do not start animation loop here
+        // Iniciar el bucle de animación solo después de cargar la escena
+        const animate = () => {
+          requestAnimationFrame(animate);
+          if (mixer) mixer.update(0.01);
+          renderer.render(scene, camera);
+        };
+      
       },
       undefined,
       (error) => {
@@ -413,6 +387,7 @@ export default function Demo() {
       avatarRef.current?.removeChild(renderer.domElement);
     };
   }, []);
+
 
   const startVoiceDemo = async () => {
     try {
