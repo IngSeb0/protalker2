@@ -398,6 +398,7 @@ export default function Demo() {
         }
 
         setMixer(mixer);
+        renderer.render(scene, camera);
 
         // Iniciar el bucle de animación solo después de cargar la escena
         const animate = () => {
@@ -418,35 +419,7 @@ export default function Demo() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!mixer) return;
 
-    const model = scene?.children.find((child) => child.name === "InterviewModel");
-    if (model && "morphTargetInfluences" in model) {
-      const influences = model.morphTargetInfluences;
-
-      const updateMouthShape = () => {
-        if (!analyserRef.current) return;
-
-        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-        analyserRef.current.getByteFrequencyData(dataArray);
-
-        const avgFrequency = dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
-
-        // Map frequencies to mouth shapes
-        if (avgFrequency > 200) {
-          influences[0] = 1; // Open mouth
-        } else {
-          influences[0] = 0; // Rest position
-        }
-
-        requestAnimationFrame(updateMouthShape);
-      };
-
-      updateMouthShape();
-    }
-  }, [mixer, scene]);
-renderer.render(scene, camera);
   const animate = () => {
     if (!isAnimating) return; // Detiene el bucle si no debe animarse
 
