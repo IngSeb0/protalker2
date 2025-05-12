@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -22,9 +21,13 @@ export default function UpdatePassword() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Verify we're in a password reset flow
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    if (!hashParams.get('type') || hashParams.get('type') !== 'recovery') {
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+
+    const type = params.get('type');
+    const access_token = params.get('access_token');
+
+    if (type !== 'recovery' || !access_token) {
       toast({
         title: 'Error',
         description: 'Enlace de restablecimiento de contraseña inválido.',

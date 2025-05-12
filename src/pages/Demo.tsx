@@ -411,11 +411,12 @@ export default function Demo() {
          const checkFrequencyAndAnimate = () => {
           const frequencyData = conversation.getOutputByteFrequencyData();
           if (frequencyData) {
-            
+            mixer.timeScale = 1;
               setIsAnimating(true);
               animate();
             } else {
-              requestAnimationFrame(checkFrequencyAndAnimate);
+              
+              mixer.timeScale = 0;
             }
           }
         
@@ -453,7 +454,7 @@ export default function Demo() {
       ]);
 
       incrementSessions();
-
+mixer.timeScale = 1;
       setIsAnimating(true); // Activa la animación
     } catch (error) {
       console.error(error);
@@ -465,15 +466,36 @@ export default function Demo() {
     }
   };
 
-  const stopVoiceDemo = async () => {
+    const stopVoiceDemo = async () => {
     await conversation.endSession();
 
-    setIsAnimating(false); // Detiene la animación
-
     if (mixer) {
-      mixer.timeScale = 0; // Pausa la animación
+      mixer.timeScale = 0; // Pause animation
     }
-  };
+
+    // Mostrar toast de recomendación
+    toast({
+      title: "¿Te gustó la demo?",
+      description: "¡Compártela con tus amigos o colegas!",
+      action: (
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => {
+            const message = '¡Estoy mejorando mis habilidades con ProTalker! Prueba la demo: ${generateShareLink()}';
+            navigator.clipboard.writeText(message).then(() => {
+              toast({
+                title: "¡Enlace copiado!",
+                description: "Pega para compartir ProTalker",
+              });
+            });
+          }}
+        >
+          Copiar enlace
+        </Button>
+      ),
+    });
+  };
 
   const handleLogout = async () => {
     await signOut();
