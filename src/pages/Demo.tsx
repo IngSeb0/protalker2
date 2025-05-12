@@ -442,20 +442,7 @@ const animationActiveRef = useRef(false);
       avatarRef.current?.removeChild(renderer.domElement);
     };
   }, []);
-useEffect(() => {
-  if (!mixer || !scene) return;
 
-  if (conversation.isSpeaking) {
-    mixer.timeScale = 1;
-    animationActiveRef.current = true;
-
-    
-    
-  } else {
-    mixer.timeScale = 0;
-    animationActiveRef.current = false;
-  }
-}, [conversation.isSpeaking, mixer, scene]);
 
   const startVoiceDemo = async () => {
     try {
@@ -501,7 +488,20 @@ useEffect(() => {
     await signOut();
     navigate('/');
   };
+useEffect(() => {
+  if (!mixer || !scene) return;
 
+  if (conversation.isSpeaking) {
+    mixer.timeScale = 1;
+    animationActiveRef.current = true;
+
+    
+    
+  } else {
+    mixer.timeScale = 0;
+    animationActiveRef.current = false;
+  }
+}, [conversation.isSpeaking, mixer, scene]);
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
