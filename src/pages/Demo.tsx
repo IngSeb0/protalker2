@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-
+import { toast as notify } from "sonner";
 import { useConversation } from '@11labs/react';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as THREE from "three";
@@ -37,6 +37,7 @@ export default function Demo() {
   const [scene, setScene] = useState<THREE.Scene | null>(null);
   const [mixer, setMixer] = useState<THREE.AnimationMixer | null>(null);
   const [isAnimating, setIsAnimating] = useState(false); // Controla si la animación está activa
+const animationActiveRef = useRef(false);
 
   const [completedSessions, setCompletedSessions] = useState(() => {
     const saved = localStorage.getItem('completedSessions');
@@ -440,29 +441,27 @@ export default function Demo() {
       avatarRef.current?.removeChild(renderer.domElement);
     };
   }, []);
-
 useEffect(() => {
-  if (!mixer) return;
+  if (!mixer || !scene) return;
 
   if (conversation.isSpeaking) {
-    // Reanuda la animación
     mixer.timeScale = 1;
+    animationActiveRef.current = true;
 
     const animate = () => {
-      if (!conversation.isSpeaking) return; // Detener el loop si ya no está hablando
+      if (!animationActiveRef.current) return; // Detener animación
       requestAnimationFrame(animate);
       mixer.update(0.01);
-      renderer.render(scene!, camera);
+      renderer.render(scene, camera);
     };
 
     animate();
   } else {
-    // Pausa la animación
     mixer.timeScale = 0;
+    animationActiveRef.current = false;
   }
-}, [conversation.isSpeaking, mixer]);
+}, [conversation.isSpeaking, mixer, scene]);
 
-  
   const startVoiceDemo = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -489,37 +488,17 @@ useEffect(() => {
     }
   };
 
-    const stopVoiceDemo = async () => {
-    await conversation.endSession();
+   const [isPopupVisible, setIsPopupVisible] = useState(false);
 
-    if (mixer) {
-      mixer.timeScale = 0; // Pause animation
-    }
+  const stopVoiceDemo = async () => {
+  await conversation.endSession();
 
-    // Mostrar toast de recomendación
-    toast({
-      title: "¿Te gustó la demo?",
-      description: "¡Compártela con tus amigos o colegas!",
-      action: (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => {
-            const message = '¡Estoy mejorando mis habilidades con ProTalker! Prueba la demo: ${generateShareLink()}';
-            navigator.clipboard.writeText(message).then(() => {
-              toast({
-                title: "¡Enlace copiado!",
-                description: "Pega para compartir ProTalker",
-              });
-            });
-          }}
-        >
-          Copiar enlace
-        </Button>
-      ),
-    });
-  };
+  if (mixer) {
+    mixer.timeScale = 0;
+  }
 
+  setIsPopupVisible(true);
+};
   const handleLogout = async () => {
     await signOut();
     navigate('/');
@@ -584,6 +563,7 @@ useEffect(() => {
               <div className="text-xs text-muted-foreground mt-2 text-center">
                 Estado: <strong>{conversation.status}</strong> — Agente está:{' '}
                 <strong>{conversation.isSpeaking ? 'Hablando' : 'Escuchando'}</strong>
+                
               </div>
             </div>
           </div>
