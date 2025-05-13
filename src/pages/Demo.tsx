@@ -576,39 +576,46 @@ useEffect(() => {
                 </TabsList>
               </div>
 
-              <TabsContent value="chat" className="flex-grow flex flex-col p-4">
-                <div
-                  ref={chatContainerRef}
-                  className="flex-grow overflow-y-auto mb-4 space-y-4"
-                >
-                  {messages.map((msg, index) => (
-                    <div
-                      key={index}
-                      className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[80%] rounded-lg p-3 ${
-                          msg.type === 'user'
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted'
-                        }`}
-                      >
-                        <div className="flex items-center mb-1">
-                          {msg.type === 'bot' ? (
-                            <Bot size={14} className="mr-1" />
-                          ) : (
-                            <User size={14} className="mr-1" />
-                          )}
-                          <span className="text-xs font-medium">
-                            {msg.type === 'user' ? 'Tú' : 'Asistente ElevenLabs'}
-                          </span>
-                        </div>
-                        <p>{msg.content}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
+              <TabsContent value="chat" className="flex flex-col p-4">
+  <div className="fixed top-0 left-0 w-full z-10">
+    <NavbarCustom />
+  </div>
+  <div className="pt-16 flex-grow flex flex-col overflow-hidden">
+    <div
+      ref={chatContainerRef}
+      className="flex-grow overflow-y-auto mb-4 space-y-4 px-4"
+      style={{ paddingTop: '60px' }} // Ajusta el espacio superior para que no cubra el Navbar
+    >
+      {messages.map((msg, index) => (
+        <div
+          key={index}
+          className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
+        >
+          <div
+            className={`max-w-[80%] rounded-lg p-3 ${
+              msg.type === 'user'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted'
+            }`}
+          >
+            <div className="flex items-center mb-1">
+              {msg.type === 'bot' ? (
+                <Bot size={14} className="mr-1" />
+              ) : (
+                <User size={14} className="mr-1" />
+              )}
+              <span className="text-xs font-medium">
+                {msg.type === 'user' ? 'Tú' : 'Asistente ElevenLabs'}
+              </span>
+            </div>
+            <p>{msg.content}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</TabsContent>
+
             </Tabs>
           </div>
 
