@@ -615,8 +615,29 @@ useEffect(() => {
             <div
               className="avatar-wrapper"
               ref={avatarRef}
-              style={{ width: "100%", height: "300px" }} // Ajusta el tamaño del contenedor del avatar
+              style={{ width: "400%", height: "500px" }} // Ajusta el tamaño del contenedor del avatar
             ></div>
+          </div>
+        </div>
+        
+        {/* Sección de Progreso */}
+        <div className="bg-white rounded-lg shadow-md p-4">
+          <h3 className="font-medium mb-3">Tu progreso</h3>
+          <div className="space-y-3">
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Sesiones completadas</span>
+                <span className="font-medium">{completedSessions}/10</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-primary h-2 rounded-full"
+                  style={{
+                    width: `${Math.min(100, (completedSessions / 10) * 100)}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
         
