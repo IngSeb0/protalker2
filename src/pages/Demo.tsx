@@ -126,12 +126,10 @@ const animationActiveRef = useRef(false);
   }, [user, profile]);
 
   const { loading, signOut } = useAuth();
-  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Array<{type: 'user' | 'bot', content: string}>>([
     {type: 'bot', content: '¡Hola! Soy tu asistente de entrenamiento. ¿En qué tipo de situación quieres practicar hoy? ¿Una entrevista laboral, una presentación académica o un discurso profesional?'}
   ]);
-  const [isListening, setIsListening] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -244,7 +242,7 @@ const animationActiveRef = useRef(false);
   const shareProgress = () => {
     const achievedBadges = badges.filter(b => b.achieved);
     const message = `¡He completado ${completedSessions} sesiones en ProTalker y gané ${achievedBadges.length} insignias! 🎉\n\nÚnete a la mejor plataforma de práctica de entrevistas: ${generateShareLink()}`;
-  
+    copyToClipboard(message);
     if (navigator.share) {
       navigator.share({
         title: "Mi progreso en ProTalker",
@@ -276,75 +274,21 @@ const animationActiveRef = useRef(false);
         setMessages(prev => [...prev, {
           type: 'bot',
           content: msg.message
-        }]);
-
-        // Analizar el texto del mensaje para sincronizar las formas de la boca
-        const words = msg.message.split(" ");
-        let wordIndex = 0;
-
-        const updateMouthShapeFromText = () => {
-          if (wordIndex >= words.length) return;
-
-          const word = words[wordIndex].toLowerCase();
-
-          // Mapear palabras o sonidos a formas de la boca
-          if (/[aeiou]/.test(word)) {
-            setMouthShape("open");
-          } else if (/f|v/.test(word)) {
-            setMouthShape("f");
-          } else if (/m|b|p/.test(word)) {
-            setMouthShape("mbp");
-          } else if (/th/.test(word)) {
-            setMouthShape("th");
-          } else {
-            setMouthShape("rest");
-          }
-
-          wordIndex++;
-          setTimeout(updateMouthShapeFromText, 300); // Cambiar forma cada 300ms
-        };
-
-        updateMouthShapeFromText();
-      }
-    },
-    onAudioPlayback: (audioStream: MediaStream) => {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new AudioContext();
-      }
-    
-      const source = audioContextRef.current.createMediaStreamSource(audioStream);
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      source.connect(analyserRef.current);
-    
-      const updateMouthShape = () => {
-        if (!analyserRef.current) return;
-    
-        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-        analyserRef.current.getByteFrequencyData(dataArray);
-    
-        const avgFrequency = dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
-    
-        // Mapear frecuencias a formas de la boca
-        if (avgFrequency > 200) {
-          setMouthShape("open");
-        } else if (avgFrequency > 150) {
-          setMouthShape("o");
-        } else if (avgFrequency > 100) {
-          setMouthShape("e");
-        } else if (avgFrequency > 75) {
-          setMouthShape("mbp");
-        } else if (avgFrequency > 50) {
-          setMouthShape("f");
-        } else if (avgFrequency > 25) {
-          setMouthShape("th");
-        } else {
-          setMouthShape("rest");
         }
-    
-        requestAnimationFrame(updateMouthShape);
-      };
-      updateMouthShape();
+      
+      ]);
+
+      }
+      else if (msg.source === "user") {
+        setMessages(prev => [...prev, {
+          type: 'user',
+          content: msg.message
+        }
+      
+      ]);
+      }
     },
+   
     onConnect: () => {
       toast({
         title: "🎙️ Conectado",
@@ -526,12 +470,7 @@ useEffect(() => {
         </Card>
       )}
 
-      <div className="mt-6">
-        <h1 className="text-2xl font-bold">Demo de entrenamiento</h1>
-        <p className="text-muted-foreground">
-          Interactúa con nuestro asistente para practicar tus habilidades de comunicación.
-        </p>
-      </div>
+    
 
       <div className="flex flex-col gap-6 flex-grow">
         <div className="w-full bg-white rounded-lg shadow-md flex flex-col">
