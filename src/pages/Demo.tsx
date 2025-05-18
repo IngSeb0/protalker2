@@ -510,62 +510,59 @@ useEffect(() => {
       </div>
     );
   }
- return (
-    <div className="min-h-screen bg-gray-50">
-      <NavbarCustom />
 
-      <main className="container mx-auto px-4 py-8">
-        {greeting && (
-          <Card className="mb-8 border-none shadow-md bg-gradient-to-r from-primary/10 to-secondary/10">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl font-bold text-primary">
-                {greeting}
-              </CardTitle>
-              <CardDescription>
-                Aquí podrás probar las funcionalidades de ProTalker.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        )}
+  return (
+    <main className="container mx-auto px-4 py-8">
+      {greeting && (
+        <Card className="mb-8 border-none shadow-md bg-gradient-to-r from-primary/10 to-secondary/10">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-2xl font-bold text-primary">
+              {greeting}
+            </CardTitle>
+            <CardDescription>
+              Aquí podrás probar las funcionalidades de ProTalker.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      )}
 
-        <div className="mt-6">
-          <h1 className="text-2xl font-bold">Demo de entrenamiento</h1>
-          <p className="text-muted-foreground">
-            Interactúa con nuestro asistente para practicar tus habilidades de comunicación.
-          </p>
-        </div>
+      <div className="mt-6">
+        <h1 className="text-2xl font-bold">Demo de entrenamiento</h1>
+        <p className="text-muted-foreground">
+          Interactúa con nuestro asistente para practicar tus habilidades de comunicación.
+        </p>
+      </div>
 
-        <div className="flex flex-col gap-6 flex-grow">
-          <div className="w-full bg-white rounded-lg shadow-md flex flex-col">
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <h3 className="font-medium mb-3">Demo de voz con ElevenLabs</h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                Inicia el demo para interactuar con el asistente utilizando voz
-                (powered by ElevenLabs)
-              </p>
-              <Button
-                onClick={startVoiceDemo}
-                className="w-full flex items-center justify-center mb-4"
-                disabled={conversation.status === 'connected'}
-              >
-                Iniciar demo de voz
-              </Button>
+      <div className="flex flex-col gap-6 flex-grow">
+        <div className="w-full bg-white rounded-lg shadow-md flex flex-col">
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <h3 className="font-medium mb-3">Demo de voz con ElevenLabs</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Inicia el demo para interactuar con el asistente utilizando voz
+              (powered by ElevenLabs)
+            </p>
+            <Button
+              onClick={startVoiceDemo}
+              className="w-full flex items-center justify-center mb-4"
+              disabled={conversation.status === 'connected'}
+            >
+              Iniciar demo de voz
+            </Button>
 
-              <Button
-                onClick={stopVoiceDemo}
-                className="w-full flex items-center justify-center bg-red-600 text-white hover:bg-red-700"
-                disabled={conversation.status !== 'connected'}
-              >
-                Detener demo de voz
-              </Button>
+            <Button
+              onClick={stopVoiceDemo}
+              className="w-full flex items-center justify-center bg-red-600 text-white hover:bg-red-700"
+              disabled={conversation.status !== 'connected'}
+            >
+              Detener demo de voz
+            </Button>
 
-              <div className="text-xs text-muted-foreground mt-2 text-center">
-                Estado: <strong>{conversation.status}</strong> — Agente está:{' '}
-                <strong>{conversation.isSpeaking ? 'Hablando' : 'Escuchando'}</strong>
-                
-              </div>
+            <div className="text-xs text-muted-foreground mt-2 text-center">
+              Estado: <strong>{conversation.status}</strong> — Agente está:{' '}
+              <strong>{conversation.isSpeaking ? 'Hablando' : 'Escuchando'}</strong>
             </div>
           </div>
+        </div>
         <div className="flex flex-col md:flex-row gap-6 flex-grow">
           {/* Chat Section */}
           <div className="w-full md:w-1/2 bg-white rounded-lg shadow-md flex flex-col">
@@ -580,6 +577,7 @@ useEffect(() => {
                 <div
                   ref={chatContainerRef}
                   className="flex-grow overflow-y-auto mb-4 space-y-4"
+                  style={{ maxHeight: '400px' }} // Establece una altura máxima y habilita el scroll
                 >
                   {messages.map((msg, index) => (
                     <div
@@ -617,138 +615,116 @@ useEffect(() => {
             <div
               className="avatar-wrapper"
               ref={avatarRef}
-              style={{ width: "400%", height: "500px" }} // Increase height for larger character
+              style={{ width: "100%", height: "300px" }} // Ajusta el tamaño del contenedor del avatar
             ></div>
           </div>
         </div>
-
-  <div className="bg-white rounded-lg shadow-md p-4">
-              <h3 className="font-medium mb-3">Tu progreso</h3>
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>Sesiones completadas</span>
-                    <span className="font-medium">{completedSessions}/10</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-primary h-2 rounded-full"
-                      style={{
-                        width: `${Math.min(100, (completedSessions / 10) * 100)}%`,
-                      }}
-                    ></div>
-                  </div>
+        
+        <div className="pt-2">
+          <p className="text-sm text-muted-foreground mb-2">Tus insignias:</p>
+          <div className="grid grid-cols-3 gap-3">
+            {badges
+              .filter((b) => b.achieved)
+              .map((badge) => (
+                <div
+                  key={badge.id}
+                  className="flex flex-col items-center p-3 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => shareBadge(badge)}
+                  title="Haz clic para compartir"
+                >
+                  <span className="text-2xl mb-1">{badge.image}</span>
+                  <span className="text-xs font-medium text-center">
+                    {badge.title}
+                  </span>
+                  <span className="text-xs text-muted-foreground text-center">
+                    {badge.description}
+                  </span>
                 </div>
+              ))}
 
-                <div className="pt-2">
-                  <p className="text-sm text-muted-foreground mb-2">Tus insignias:</p>
-                  <div className="grid grid-cols-3 gap-3">
-                    {badges
-                      .filter((b) => b.achieved)
-                      .map((badge) => (
-                        <div
-                          key={badge.id}
-                          className="flex flex-col items-center p-3 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg cursor-pointer hover:shadow-md transition-all"
-                          onClick={() => shareBadge(badge)}
-                          title="Haz clic para compartir"
-                        >
-                          <span className="text-2xl mb-1">{badge.image}</span>
-                          <span className="text-xs font-medium text-center">
-                            {badge.title}
-                          </span>
-                          <span className="text-xs text-muted-foreground text-center">
-                            {badge.description}
-                          </span>
-                        </div>
-                      ))}
-
-                    {badges
-                      .filter((b) => !b.achieved)
-                      .map((badge) => (
-                        <div
-                          key={badge.id}
-                          className="flex flex-col items-center p-3 bg-gray-100 rounded-lg opacity-50"
-                        >
-                          <span className="text-2xl mb-1">🔒</span>
-                          <span className="text-xs font-medium text-center">
-                            {badge.title}
-                          </span>
-                          <span className="text-xs text-muted-foreground text-center">
-                            {badge.description}
-                          </span>
-                        </div>
-                      ))}
-                  </div>
+            {badges
+              .filter((b) => !b.achieved)
+              .map((badge) => (
+                <div
+                  key={badge.id}
+                  className="flex flex-col items-center p-3 bg-gray-100 rounded-lg opacity-50"
+                >
+                  <span className="text-2xl mb-1">🔒</span>
+                  <span className="text-xs font-medium text-center">
+                    {badge.title}
+                  </span>
+                  <span className="text-xs text-muted-foreground text-center">
+                    {badge.description}
+                  </span>
                 </div>
-              </div>
-            </div>
-          <div className="mt-4 flex flex-col gap-2">
-            <Button
-              variant="outline"
-              onClick={shareProgress}
-              className="flex items-center justify-center gap-2 mt-4"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                />
-              </svg>
-              Compartir mi progreso
-            </Button>
-
-            <Button
-              variant="link"
-              onClick={() => {
-                const message = `¡Estoy mejorando mis habilidades con ProTalker! Prueba la demo: ${generateShareLink()}`;
-                navigator.clipboard
-                  .writeText(message)
-                  .then(() => {
-                    toast({
-                      title: "¡Mensaje copiado!",
-                      description: "El mensaje ha sido copiado al portapapeles.",
-                    });
-                  })
-                  .catch((error) => {
-                    console.error("Error al copiar el mensaje:", error);
-                  });
-              }}
-              className="text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center gap-1"
-            >
-              Compartir ProTalker
-            </Button>
-            
-            </div>
+              ))}
           </div>
-          {isPopupVisible && (
-                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                   <div className="w-full max-w-sm md:max-w-md lg:max-w-lg bg-white rounded-xl shadow-xl p-6 text-center">
-                     <h2 className="text-xl font-bold mb-2">¿Te gustó la demo?</h2>
-                     <p className="text-gray-700 mb-4">¡Compártela con tus amigos o colegas!</p>
-                     <button
-                       className="bg-blue-600 text-white rounded px-5 py-2 text-sm hover:bg-blue-700 transition"
-                       onClick={() => {
-                         const message = `¡Estoy mejorando mis habilidades con ProTalker! Prueba la demo: https://protalker-demo.vercel.app/`;
-                         navigator.clipboard.writeText(message).then(() => {
-                           notify("¡Enlace copiado!");
-                         });
-                         setIsPopupVisible(false); // Cerrar el popup
-                       }}
-                     >
-                       Copiar enlace
-                     </button>
-                   </div>
-                 </div>
-               )}
-      </main>
-    </div>
+        </div>
+      </div>
+      <div className="mt-4 flex flex-col gap-2">
+        <Button
+          variant="outline"
+          onClick={shareProgress}
+          className="flex items-center justify-center gap-2 mt-4"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+            />
+          </svg>
+          Compartir mi progreso
+        </Button>
+
+        <Button
+          variant="link"
+          onClick={() => {
+            const message = `¡Estoy mejorando mis habilidades con ProTalker! Prueba la demo: ${generateShareLink()}`;
+            navigator.clipboard
+              .writeText(message)
+              .then(() => {
+                toast({
+                  title: "¡Mensaje copiado!",
+                  description: "El mensaje ha sido copiado al portapapeles.",
+                });
+              })
+              .catch((error) => {
+                console.error("Error al copiar el mensaje:", error);
+              });
+          }}
+          className="text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center gap-1"
+        >
+          Compartir ProTalker
+        </Button>
+      </div>
+      {isPopupVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="w-full max-w-sm md:max-w-md lg:max-w-lg bg-white rounded-xl shadow-xl p-6 text-center">
+            <h2 className="text-xl font-bold mb-2">¿Te gustó la demo?</h2>
+            <p className="text-gray-700 mb-4">¡Compártela con tus amigos o colegas!</p>
+            <button
+              className="bg-blue-600 text-white rounded px-5 py-2 text-sm hover:bg-blue-700 transition"
+              onClick={() => {
+                const message = `¡Estoy mejorando mis habilidades con ProTalker! Prueba la demo: https://protalker-demo.vercel.app/`;
+                navigator.clipboard.writeText(message).then(() => {
+                  notify("¡Enlace copiado!");
+                });
+                setIsPopupVisible(false); // Cerrar el popup
+              }}
+            >
+              Copiar enlace
+            </button>
+          </div>
+        </div>
+      )}
+    </main>
   );
-  }
+}
